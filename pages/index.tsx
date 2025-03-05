@@ -10,9 +10,14 @@ export default function Home() {
 
 
 export function fetchProjects(){
-  const a = {
+  const a = [{
     id: 1,
     name: "test",
-    description: "test",}
+    description: "test",},
+  {
+    id: 2,
+    name: "test2",
+    description: "test2",
+  }]
   return JSON.stringify(a);
 }

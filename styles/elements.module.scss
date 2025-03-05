@@ -1,0 +1,14 @@
+.navigation{
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    border-right: 2px solid var(--color4);
+    ul{
+      list-style: none;
+      margin: 1em 0;
+      li{
+        line-height: 1.5em;
+      }
+    }
+}
