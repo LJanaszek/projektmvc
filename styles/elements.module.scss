@@ -1,14 +1,61 @@
-.navigation{
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
-    padding: 1em;
-    border-right: 2px solid var(--color4);
-    ul{
+.navigation {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  border-right: 2px solid var(--color4);
+  ul {
+    list-style: none;
+    margin: 1em 0;
+    li {
+      line-height: 1.5em;
+    }
+  }
+}
+.projects {
+  display: grid;
+  grid-template-columns: 20% 80%;
+  .navigation {
+    .projectList {
       list-style: none;
-      margin: 1em 0;
-      li{
-        line-height: 1.5em;
+      li:hover {
+        cursor: pointer;
       }
     }
+  }
+  .projectContent {
+    padding: 1em;
+    display: grid;
+    grid-gap: 2em;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: space-between;
+    .toDo {
+      // padding: 1em;
+      display: flex;
+      flex-direction: column;
+      border: 2px solid var(--color4);
+      background-color: var(--color8);
+      border-radius: 1em;
+      border-radius: 5px;
+      height: 85vh;
+      h2 {
+        background-color: var(--color9);
+        color: var(--color3);
+        padding: 0.5em;
+      }
+      .tasks {
+        overflow: auto;
+        .task {
+          padding: 0.5em;
+          max-height: 20vh;
+          border-radius: 5px;
+          background-color: var(--color7);
+          margin: 0.5em;
+        }
+      }
+      ul {
+        list-style: none;
+      }
+    }
+  }
 }
