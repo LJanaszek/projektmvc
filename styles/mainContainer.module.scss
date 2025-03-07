@@ -1,0 +1,15 @@
+.mainContainer{
+    h1{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 10vh;
+        text-align: center;
+        // padding: 1em 0;
+        font-weight: bold;
+        text-transform: uppercase;
+        background-color: var(--color1);
+        color: var(--color7);
+    }
+    
+}
