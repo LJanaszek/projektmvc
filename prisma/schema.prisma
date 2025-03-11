@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  username   String
+  password   String
+  imgBitmap  String
+  createdAt  DateTime @default(now())
+
+  assignedProjects AssignedUsers[]
+  tasks            Task[]
+  comments         Comment[]
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  description String?
+  name        String
+  createdAt   DateTime @default(now())
+
+  assignedUsers AssignedUsers[]
+  tasks         Task[]
+  statuses      Status[]
+}
+
+model AssignedUsers {
+  userId    String
+  projectId String
+  role      String
+
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@id([userId, projectId])
+}
+
+model Task {
+  id         String   @id @default(uuid())
+  status     Int
+  assignedTo String?
+  projectId  String
+  createdAt  DateTime @default(now())
+
+  assignee User?   @relation(fields: [assignedTo], references: [id])
+  project  Project @relation(fields: [projectId], references: [id])
+  comments Comment[]
+}
+
+model Comment {
+  id      String @id @default(uuid())
+  body    String
+  madeBy  String
+  taskId  String
+  toComent String?
+
+  author User @relation(fields: [madeBy], references: [id])
+  task   Task? @relation(fields: [taskId], references: [id])
+}
+
+model Status {
+  projectId String
+  order     Int
+  name      String
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@id([projectId, order])
+}
