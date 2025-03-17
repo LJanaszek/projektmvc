@@ -43,6 +43,7 @@
       display: flex;  
       grid-template-columns: repeat(3, 1fr);
       gap: 2em;
+      min-height: 50vh;
     }
     .toDo{
       min-width: 20vw;
