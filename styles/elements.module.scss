@@ -25,36 +25,35 @@
   }
   .projectContent {
     padding: 1em;
-    display: grid;
     grid-gap: 2em;
-    grid-template-columns: repeat(3, 1fr);
     justify-content: space-between;
-    .toDo {
-      // padding: 1em;
+    h3 {
+      background-color: var(--color9);
+      color: var(--color3);
+      padding: 0.5em;
+    }
+    .tasks {
+      overflow: auto;
+    }
+    ul {
+      list-style: none;
+    }
+    .task{
+      width: 70vw;
+      display: flex;  
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2em;
+    }
+    .toDo{
+      min-width: 20vw;
+      display: block;
+    }
+    .taskSingleRow{
       display: flex;
-      flex-direction: column;
-      border: 2px solid var(--color4);
-      background-color: var(--color8);
-      border-radius: 1em;
-      border-radius: 5px;
-      height: 85vh;
-      h2 {
-        background-color: var(--color9);
-        color: var(--color3);
-        padding: 0.5em;
-      }
-      .tasks {
-        overflow: auto;
-        .task {
-          padding: 0.5em;
-          max-height: 20vh;
-          border-radius: 5px;
-          background-color: var(--color7);
-          margin: 0.5em;
-        }
-      }
-      ul {
-        list-style: none;
+      justify-content: space-between;
+      
+      button{
+        border: unset;
       }
     }
   }
