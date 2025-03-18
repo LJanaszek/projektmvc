@@ -1,7 +1,7 @@
 'use client';
 import styles from "@/styles/elements.module.scss";
 import data from "@/data/projects.json";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import RedoIcon from '@mui/icons-material/Redo';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -23,7 +23,9 @@ interface Task {
 export default function ProjectContent() {
   const [selectedProject, setSelectedProject] = useState('');
   const projects = data.projects;
-  const tasks = data.tasks;
+
+  // const tasks = useRef(data.tasks);
+  const [tasks, setTasks] = useState(data.tasks);
   const labels2 = [
     {
       order: "1",
@@ -41,9 +43,21 @@ export default function ProjectContent() {
     }
   ]
   const labels = ['To Do', 'In Progress', 'Done', 'chuj'];
-  useEffect(() => {
-    console.log(selectedProject);
-  }, [selectedProject]);
+
+  function deleteTaskFromTasks(id: string) {
+    setTasks(tasks.filter((task: Task) => task.id !== id));
+
+    // miejsce na request 
+  }
+  function changeTaskStatus(id: string, status: string) {
+    setTasks(tasks.map((task: Task) => {
+      if (task.id === id) {
+        return { ...task, status: status };
+      }
+      return task;
+    }));
+  }
+
   return (
     <div className={styles.projects}>
       <div className={styles.navigation}>
@@ -88,12 +102,19 @@ export default function ProjectContent() {
                                 <button>
                                   <DescriptionIcon />
                                 </button>
-                                <button>
+
+
+                                <button onClick={()=>{
+                                  changeTaskStatus(task.id, task.status)
+                                }}>
                                   <RedoIcon />
                                 </button>
-                                <button onClick={() => {
-                                  //change status of task.id element
 
+
+
+
+                                <button onClick={() => {
+                                  deleteTaskFromTasks(task.id);
                                 }}>
                                   <CloseIcon />
                                 </button>
