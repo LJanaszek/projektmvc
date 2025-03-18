@@ -16,6 +16,7 @@
     "tasks" :[{
             "id": "1",
             "label": "Task 1",
+            "description": "Description 1",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -23,6 +24,7 @@
         },{
             "id": "2",
             "label": "Task 2",
+            "description": "Description 2",
             "status": "in progress",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -30,6 +32,7 @@
         },{
             "id": "3",
             "label": "Task 3",
+            "description": "Description 3",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -37,6 +40,7 @@
         },{
             "id": "4",
             "label": "Task 4",
+            "description": "Description 4",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -44,6 +48,7 @@
         },{
             "id": "5",
             "label": "Task 5",
+            "description": "Description 5",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -51,6 +56,7 @@
         },{
             "id": "6",
             "label": "Task 6",
+            "description": "Description 6",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -58,6 +64,7 @@
         },{
             "id": "7",
             "label": "Task 7",
+            "description": "Description 7",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
@@ -65,6 +72,7 @@
         },{
             "id": "8",
             "label": "Task 8",
+            "description": "Description 8",
             "status": "to do",
             "assigned_to": "Task 1",
             "project_id": "1",
