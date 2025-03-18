@@ -20,7 +20,7 @@ export default async function handler(
       const newUser = await prisma.user.create({
         data: {
           username: "pomidor",
-          password: "securepassword",
+          password: bcrypt.hashSync("123", 10),
           imgBitmap: "dsadsa",
         },
       });
