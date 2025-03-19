@@ -118,15 +118,27 @@ export default function ProjectContent() {
                 {projects.find((project: Project) => project.id === selectedProject)?.createdAt || ''}
               </p>
             </div>
-            {projects.find((project: Project) => project.id === selectedProject)?.name && (
-              <button className={styles.projectSettings}
-                onClick={() => {
-                  setProjectSettings(!projectSettings);
-                }}>
-                <MoreHorizIcon fontSize="large" />
-              </button>
-            )}
+            <div className={styles.projectActions}>
+              <div className={styles.projectSettingsPopup}>
+                {projectSettings &&
+                  <div className={styles.settings}>
+                    <button>change project name</button>
+                    <button>menage members</button>
+                    <button>delete project</button>
+                  </div>
+                }
+              </div>
+              {projects.find((project: Project) => project.id === selectedProject)?.name && (
+                <button className={styles.projectSettings}
+                  onClick={() => {
+                    setProjectSettings(!projectSettings);
+                  }}>
+                  <MoreHorizIcon fontSize="large" />
+                </button>
+              )}
 
+
+            </div>
           </div>
           {projects
             .filter((project: Project) => project.id === selectedProject)
