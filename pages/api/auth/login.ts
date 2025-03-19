@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { serialize } from "cookie";
 
 const users = [
-  { id: 1, email: "user@example.com", password: bcrypt.hashSync("password123", 10) }
+  { id: 1, email: "chuj", password: bcrypt.hashSync("123", 10) }
 ];
 
 export default function handler(req, res) {
