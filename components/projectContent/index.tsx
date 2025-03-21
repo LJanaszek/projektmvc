@@ -26,7 +26,7 @@ interface Task {
 }
 export default function ProjectContent() {
   const [selectedProject, setSelectedProject] = useState('');
-  const projects = data.projects;
+  const [projects, setProjects] = useState(data.projects);
   const [changeState, setChangeState] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [taskLabel, setTaskLabel] = useState("");
@@ -34,6 +34,11 @@ export default function ProjectContent() {
   const [taskStatus, setTaskStatus] = useState("");
   const [createNewTask, setCreateNewTask] = useState(false);
   const [projectSettings, setProjectSettings] = useState(false);
+  const [deleteProject, setDeleteProject] = useState(false);
+  const [rename, setRename] = useState(false);
+  const [menageMembers, setMenageMembers] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [projectName, setProjectName] = useState(data.projects.find((project: Project) => project.id === selectedProject)?.name || '');
 
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState(data.tasks);
@@ -92,6 +97,18 @@ export default function ProjectContent() {
 
   }
 
+  function renameProject() {
+    setProjects(projects.map((project: Project) => {
+      if (project.id === selectedProject) {
+        return { ...project, name: projectName };
+      }
+      return project;
+    }))
+  }
+
+  function deleteProjectById(id: string) {
+    setProjects(projects.filter((project: Project) => project.id !== id));
+  }
   return (
     <div className={styles.projects}>
       <div className={styles.navigation}>
@@ -122,9 +139,24 @@ export default function ProjectContent() {
               <div className={styles.projectSettingsPopup}>
                 {projectSettings &&
                   <div className={styles.settings}>
-                    <button>change project name</button>
-                    <button>menage members</button>
-                    <button>delete project</button>
+                    <button onClick={() => {
+                      setRename(true)
+                      setOpenSettings(true)
+                    }}>
+                      change project name
+                    </button>
+                    <button onClick={() => {
+                      setMenageMembers(true)
+                      setOpenSettings(true)
+                    }}>
+                      menage members
+                    </button>
+                    <button onClick={() => {
+                      setDeleteProject(true)
+                      setOpenSettings(true)
+                    }}>
+                      delete project
+                    </button>
                   </div>
                 }
               </div>
@@ -302,6 +334,70 @@ export default function ProjectContent() {
                 </div>
               </div>
             </Popup>
+          }
+          {openSettings &&
+            <Popup closeButton={() => {
+              setOpenSettings(false);
+              setProjectSettings(false);
+              setDeleteProject(false);
+              setRename(false);
+              setMenageMembers(false);
+              }}>
+              <div>
+                {rename &&
+                  <input type="text" defaultValue={projectName} onChange={(e) => {
+                    setProjectName(e.currentTarget.value);
+                  }} />
+                }
+                {
+                  menageMembers &&
+                  <div>
+                    <h3>members</h3>
+                    <ul>
+                      {/* {members.map((member, index) => {
+                        return <li key={index}>{member}</li>
+                      })} */}
+                    </ul>
+                  </div>
+                }
+                {deleteProject &&
+
+                  <div>
+                    <h3>are you sure you want to delete this project?</h3>
+                    <button onClick={() => {
+                      deleteProjectById(selectedProject);
+                      setOpenSettings(false);
+                    }}>
+                      Delete
+                    </button>
+                    <button onClick={() => {
+                      setOpenSettings(false)
+                      setDeleteProject(false);
+                      setProjectSettings(false);
+                      }}>
+                      Cancel
+                    </button>
+                  </div>
+
+                }
+                {!deleteProject &&
+                  <button className={styles.saveButton}
+                    onClick={() => {
+                      renameProject();
+                      setProjectSettings(!projectSettings);
+                      setOpenSettings(!openSettings);
+
+                      setRename(false);
+                      setMenageMembers(false);
+                      setDeleteProject(false);
+                    }}
+                  >
+                    save <SaveOutlinedIcon />
+                  </button>
+                }
+              </div>
+            </Popup>
+
           }
         </div>
       </div>
