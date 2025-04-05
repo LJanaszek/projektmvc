@@ -20,42 +20,42 @@ model User {
   imgBitmap  String
   createdAt  DateTime @default(now())
 
-  assignedProjects AssignedUsers[]
+  assignedUsers AssignedUsers[]
   tasks            Task[]
   comments         Comment[]
 }
 
 model Project {
   id          String   @id @default(uuid())
-  description String?
   name        String
+  descryption String
   createdAt   DateTime @default(now())
-
+  
   assignedUsers AssignedUsers[]
-  tasks         Task[]
-  statuses      Status[]
+  tasks       Task[]
 }
 
 model AssignedUsers {
   userId    String
   projectId String
   role      String
-
-  user    User    @relation(fields: [userId], references: [id])
-  project Project @relation(fields: [projectId], references: [id])
-
+  
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
   @@id([userId, projectId])
 }
 
 model Task {
   id         String   @id @default(uuid())
-  status     Int
+  label      String
+  status     String
   assignedTo String?
   projectId  String
   createdAt  DateTime @default(now())
-
-  assignee User?   @relation(fields: [assignedTo], references: [id])
-  project  Project @relation(fields: [projectId], references: [id])
+  
+  assignedUser User?   @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
+  project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   comments Comment[]
 }
 
@@ -64,18 +64,7 @@ model Comment {
   body    String
   madeBy  String
   taskId  String
-  toComent String?
 
   author User @relation(fields: [madeBy], references: [id])
   task   Task? @relation(fields: [taskId], references: [id])
-}
-
-model Status {
-  projectId String
-  order     Int
-  name      String
-
-  project Project @relation(fields: [projectId], references: [id])
-
-  @@id([projectId, order])
 }

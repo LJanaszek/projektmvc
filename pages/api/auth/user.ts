@@ -5,13 +5,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const pattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ){
-  if(req.method == "POST"){ // l
+  if(req.method == "POST"){ // L
     const { username, password } = req.body;
     const user = await prisma.user.findFirst({
       where:{
@@ -23,10 +24,10 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Create JWT token
+    
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    // Set token in HTTP-only cookie
+    
     res.setHeader("Set-Cookie", serialize("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -36,7 +37,7 @@ export default async function handler(
 
     return res.status(200).json({ message: "Login successful" });
   }
-  else if(req.method == "PUT"){ // r
+  else if(req.method == "PUT"){ // R
     const { username, password, secPassword} = req.body;
     const user = await prisma.user.findFirst({
       where:{
@@ -53,6 +54,10 @@ export default async function handler(
 
     if(password != secPassword){
       return res.status(400).json({message:"Passwords are not matching"})
+    }
+
+    if(!pattern.test(password)){
+      return res.status(400).json({message:"Passwords does not meet requirements"})
     }
     
     const newUser = await prisma.user.create({

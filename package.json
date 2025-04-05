@@ -17,8 +17,7 @@
     "bcrypt": "^5.1.1",
     "cookie": "^1.0.2",
     "jsonwebtoken": "^9.0.2",
-    "next": "15.2.0",
-    "prisma": "^6.4.1",
+    "next": "^15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -29,6 +28,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.0",
+    "prisma": "^6.5.0",
     "typescript": "^5"
   }
 }
