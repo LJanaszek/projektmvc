@@ -69,7 +69,11 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 
      
 
-        if (!password.value || password.value.length < 6) {
+        if (!password.value || password.value.length < 8) {
+            // wielka litera
+            //znak specjalny 
+            //cyfra
+            //mała litera
             setPasswordError(true);
             setPasswordErrorMessage('Password must be at least 6 characters long.');
             isValid = false;
