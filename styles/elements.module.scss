@@ -119,6 +119,10 @@
     .taskSingleRow {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+      box-shadow: 2px black;
+      padding: 0.8em 0;
 
       button {
         border: unset;

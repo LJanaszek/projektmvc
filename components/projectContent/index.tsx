@@ -59,7 +59,7 @@ export default function ProjectContent() {
     }
   ]
   console.log(labels2);
-  const labels = ['To Do', 'In Progress', 'Done', 'chuj'];
+  const labels = ['To Do', 'In Progress', 'Done'];
 
   function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
