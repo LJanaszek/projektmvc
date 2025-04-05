@@ -8,6 +8,7 @@ import {
     TextField,
     Button,
 } from "@mui/material";
+import Link from "next/link";
 import { useState } from "react";
 // import { UserData } from "@/data/user";
 
@@ -84,6 +85,7 @@ const LoginPage = () => {
                     >
                         LoginPage
                     </Button>
+                    <Link href="/register">You don&apos;t have an account?</Link>
                     {error && <Typography color="error">{error}</Typography>}
                 </Box>
             </Box>

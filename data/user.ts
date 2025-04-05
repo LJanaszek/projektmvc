@@ -2,6 +2,7 @@ interface User {
     id: string,
     username: string,
     password: string,
+    imgBitmap?: string,
     created_at: string,
 }
 
