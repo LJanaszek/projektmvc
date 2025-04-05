@@ -61,12 +61,12 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
     const [repeatPasswordError, setRepeatPasswordError] = React.useState(false);
     const [repeatPasswordErrorMessage, setRepeatPasswordErrorMessage] = React.useState('');
-    const [isValid,setIsValid]=React.useState(false);
+    const [isValid, setIsValid] = React.useState(false);
     const validateInputs = async () => {
         const password = document.getElementById('password') as HTMLInputElement;
         const name = document.getElementById('name') as HTMLInputElement;
         const repeatPassword = document.getElementById('repeatPassword') as HTMLInputElement;
-    
+
         if (!password.value || password.value.length < 8) {
             // wielka litera
             //znak specjalny 
@@ -79,7 +79,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
             setPasswordError(false);
             setPasswordErrorMessage('');
         }
-        if(password.value !== repeatPassword.value) {
+        if (password.value !== repeatPassword.value) {
             console.log(password.value);
             console.log(repeatPassword.value);
             setRepeatPasswordError(true);
@@ -98,51 +98,43 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 
         return isValid;
     };
-    React.useEffect (()=>{
-        const register = async ()=>{
-                const password = document.getElementById('password') as HTMLInputElement;
-                const name = document.getElementById('name') as HTMLInputElement;
-                const repeatPassword = document.getElementById('repeatPassword') as HTMLInputElement;
-                try {
-                    const res = await fetch("/api/auth/user", {
-                        method: "PUT",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            username: name.value,
-                            password: password.value, 
-                            secPassword: repeatPassword.value
-                        })
-                    });
-            
-                    if (res.status === 200) {
-                        window.location.href = '/';
-                    } 
-                    else if (res.status === 409) {
-                        // username TAKEN 
-                        console.log("username TAKEN" )
-                    }
-                    else{
-                        console.log("Bad Request ergo coś jest źle z danymi")
-                    }
-                } 
-                catch (er) {
-                    // Coś się grubo wywaliło
-                    console.log("Error:",er)
-                }
-            }
-        if(isValid){
-            register();
-        }
-    })
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        if (nameError || passwordError || repeatPasswordError) {
-            event.preventDefault();
+
+    const handleSubmit = async () => {
+        if (!validateInputs()) {
             return;
-        }      
-        console.log('Form submitted');
-        window.location.href = '/login';
+        };
+        const password = document.getElementById('password') as HTMLInputElement;
+        const name = document.getElementById('name') as HTMLInputElement;
+        const repeatPassword = document.getElementById('repeatPassword') as HTMLInputElement;
+        try {
+            const res = await fetch("/api/auth/user", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: name.value,
+                    password: password.value,
+                    secPassword: repeatPassword.value
+                })
+            });
+
+            if (res.status === 201) {
+                window.location.href = '/';
+                
+            }
+            else if (res.status === 409) {
+                // username TAKEN 
+                console.log("username TAKEN")
+            }
+            else {
+                console.log("Bad Request ergo coś jest źle z danymi")
+            }
+        }
+        catch (er) {
+            // Coś się grubo wywaliło
+            console.log("Error:", er)
+        }
     };
 
     return (
@@ -215,7 +207,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            onClick={validateInputs}
+                            onClick={handleSubmit}
                         >
                             Sign up
                         </Button>
