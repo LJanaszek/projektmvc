@@ -61,14 +61,12 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
     const [repeatPasswordError, setRepeatPasswordError] = React.useState(false);
     const [repeatPasswordErrorMessage, setRepeatPasswordErrorMessage] = React.useState('');
-    const validateInputs = () => {
+    const [isValid,setIsValid]=React.useState(false);
+    const validateInputs = async () => {
         const password = document.getElementById('password') as HTMLInputElement;
         const name = document.getElementById('name') as HTMLInputElement;
         const repeatPassword = document.getElementById('repeatPassword') as HTMLInputElement;
-        let isValid = true;
-
-     
-
+    
         if (!password.value || password.value.length < 8) {
             // wielka litera
             //znak specjalny 
@@ -76,21 +74,23 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
             //mała litera
             setPasswordError(true);
             setPasswordErrorMessage('Password must be at least 6 characters long.');
-            isValid = false;
+            setIsValid(false);
         } else {
             setPasswordError(false);
             setPasswordErrorMessage('');
         }
         if(password.value !== repeatPassword.value) {
+            console.log(password.value);
+            console.log(repeatPassword.value);
             setRepeatPasswordError(true);
             setRepeatPasswordErrorMessage('Passwords do not match.');
-            isValid = false;
+            setIsValid(false);
         }
 
         if (!name.value || name.value.length < 1) {
             setNameError(true);
             setNameErrorMessage('Name is required.');
-            isValid = false;
+            setIsValid(false);
         } else {
             setNameError(false);
             setNameErrorMessage('');
@@ -98,12 +98,49 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
 
         return isValid;
     };
-
+    React.useEffect (()=>{
+        const register = async ()=>{
+                const password = document.getElementById('password') as HTMLInputElement;
+                const name = document.getElementById('name') as HTMLInputElement;
+                const repeatPassword = document.getElementById('repeatPassword') as HTMLInputElement;
+                try {
+                    const res = await fetch("/api/auth/user", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            username: name.value,
+                            password: password.value, 
+                            secPassword: repeatPassword.value
+                        })
+                    });
+            
+                    if (res.status === 200) {
+                        window.location.href = '/';
+                    } 
+                    else if (res.status === 409) {
+                        // username TAKEN 
+                        console.log("username TAKEN" )
+                    }
+                    else{
+                        console.log("Bad Request ergo coś jest źle z danymi")
+                    }
+                } 
+                catch (er) {
+                    // Coś się grubo wywaliło
+                    console.log("Error:",er)
+                }
+            }
+        if(isValid){
+            register();
+        }
+    })
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         if (nameError || passwordError || repeatPasswordError) {
             event.preventDefault();
             return;
-        }
+        }      
         console.log('Form submitted');
         window.location.href = '/login';
     };
