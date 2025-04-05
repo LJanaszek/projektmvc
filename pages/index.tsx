@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [userName, setUserName] = useState(false);
   useEffect(() => {
-    fetch("/api/auth/me")
+    fetch("/api/auth/user")
       .then(res => res.json())
       .then(data => {
         if (data.user) {
-          setUserName(data.user.email);
+          setUserName(data.user.username);
         }
         else {
           window.location.href = "/login"
