@@ -7,13 +7,17 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const pattern: RegExp = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ){
   if(req.method == "POST"){ // L
     const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
     const user = await prisma.user.findFirst({
       where:{
         username:username
@@ -24,9 +28,7 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    
     const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
     
     res.setHeader("Set-Cookie", serialize("auth_token", token, {
       httpOnly: true,
@@ -39,6 +41,11 @@ export default async function handler(
   }
   else if(req.method == "PUT"){ // R
     const { username, password, secPassword} = req.body;
+
+    if (!username || !password || !secPassword) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
     const user = await prisma.user.findFirst({
       where:{
         username:username
@@ -64,7 +71,7 @@ export default async function handler(
       data:{
         username:username,
         password:bcrypt.hashSync(password, 10),
-        imgBitmap:"Comming Soon..."
+        imgBitmap:"Coming Soon..."
       }
     })
 
@@ -88,10 +95,10 @@ export default async function handler(
 
     try {
       const user = jwt.verify(token, process.env.JWT_SECRET);
-      res.status(200).json({ user });
+      return res.status(200).json({ user });
     } catch (error) {
-      res.status(401).json({ message: "Invalid token + " + error.message || "" });
+      return res.status(401).json({ message: "Invalid token + " + error.message || "" });
     }
   }
-  return res.status(405).json({ message: "Method Not Allowed" });
+  return res.status(405).json({ message: `Method ${req.method} Not Allowed`});
 }
