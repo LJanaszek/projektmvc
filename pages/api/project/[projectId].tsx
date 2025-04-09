@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { authenticateUser } from '../../../backedLogic/authenticateUser';
+import { isAssigned } from '../../../backedLogic/isAssigned';
 
 const prisma = new PrismaClient();
 
@@ -28,16 +29,8 @@ export default async function handler(
         message:"Project does not exists"
     })
 
-    const isAssigned = await prisma.assignedUsers.findFirst({
-        where:{
-            userId:reqUser.id,
-            projectId:projectId
-        }
-    })
-
-    if(!isAssigned) return res.status(403).json({
-        message:"User not authorized to delete project"
-    })
+    const is = await isAssigned(req, res, reqUser, projectId, "make changes to this project");
+    if(!is) return;
     
     if(req.method=="GET"){
         const tasks = await prisma.task.findMany({
