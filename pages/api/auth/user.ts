@@ -11,6 +11,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ){
+  if (!['POST', 'GET', 'PUT'].includes(req.method)) return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
+
   if(req.method == "POST"){ // L
     const { username, password } = req.body;
 
@@ -100,5 +102,4 @@ export default async function handler(
       return res.status(401).json({ message: "Invalid token + " + error.message || "" });
     }
   }
-  return res.status(405).json({ message: `Method ${req.method} Not Allowed`});
 }

@@ -8,6 +8,8 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ){
+    if (!['POST', 'GET'].includes(req.method)) return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
+
     const reqUser = authenticateUser(req, res);
     if (!reqUser) return;
     
@@ -61,6 +63,4 @@ export default async function handler(
             return res.status(500).json({message:"Error with serv"});
         }
     }
-
-    return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
 }
