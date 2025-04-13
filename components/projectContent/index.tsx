@@ -60,12 +60,21 @@ export default function ProjectContent() {
     // miejsce na request 
   }
 
+  function menageUsers(userId: string) {
+    console.log(userId);
+
+    //miejsce na request do zarządzania userami 
+    // @Sebastian-Golatowski
+  }
+
   function addNewProject() {
     setProjects([...projects, {
       id: projectName,
       name: projectName,
       description: "",
       createdAt: new Date().toISOString().split('T')[0] //get current date without time
+      //miejsce na request do dodawania nowego projektu 
+      // @Sebastian-Golatowski
     }]);
     setSelectedProject(projectName)
   }
@@ -434,6 +443,7 @@ export default function ProjectContent() {
                           {!addedUsers.includes(user.id) ?
                             <button onClick={() => {
                               setAddedUsers([...addedUsers, user.id]);
+                              menageUsers(user.id);
                             }}>
                               <AddIcon className={styles.addIcon} />
                             </button> :
@@ -453,7 +463,7 @@ export default function ProjectContent() {
 
                       <button onClick={() => {
                         deleteProjectById(selectedProject);
-                        setOpenSettings(false);
+                        setProjectSettings(false);
                       }}
                         className={styles.deleteButton}
                       >
