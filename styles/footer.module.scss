@@ -6,13 +6,15 @@
   padding: 2em;
   text-align: center;
   .content {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 2em;
- 
-      h3 {
+    width: 80vw;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2em;
+
+    h3 {
       font-size: 24px;
-      margin-bottom: .6em;
+      margin-bottom: 1em;
     }
     .creators {
       ul {
@@ -20,6 +22,22 @@
         line-height: 1.3em;
         li {
           font-size: 16px;
+        }
+      }
+      .creatorsList {
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 70vw;
+        h4{
+          margin-bottom: 1em;
+        }
+        .team {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
         }
       }
     }

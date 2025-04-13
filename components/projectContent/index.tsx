@@ -9,6 +9,9 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextField } from "@mui/material";
+import { UserData } from "@/data/user";
+import DoneIcon from '@mui/icons-material/Done';
+
 
 interface Project {
   id: string;
@@ -41,11 +44,15 @@ export default function ProjectContent() {
   const [openSettings, setOpenSettings] = useState(false);
   const [projectName, setProjectName] = useState(data.projects.find((project: Project) => project.id === selectedProject)?.name || '');
   const [addProject, setAddProject] = useState(false);
-
+  const [addedUsers, setAddedUsers] = useState([]);
+  const users = UserData;
 
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState(data.tasks);
   const labels = ['To Do', 'In Progress', 'Done'];
+
+
+  console.log(users);
 
   function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
@@ -147,30 +154,6 @@ export default function ProjectContent() {
 
             </div>
             <div className={styles.projectActions}>
-              <div className={styles.projectSettingsPopup}>
-                {projectSettings &&
-                  <div className={styles.settings}>
-                    <button onClick={() => {
-                      setRename(true)
-                      setOpenSettings(true)
-                    }}>
-                      change project name
-                    </button>
-                    <button onClick={() => {
-                      setMenageMembers(true)
-                      setOpenSettings(true)
-                    }}>
-                      menage members
-                    </button>
-                    <button onClick={() => {
-                      setDeleteProject(true)
-                      setOpenSettings(true)
-                    }}>
-                      delete project
-                    </button>
-                  </div>
-                }
-              </div>
               {projects.find((project: Project) => project.id === selectedProject)?.name && (
                 <button className={styles.projectSettings}
                   onClick={() => {
@@ -360,7 +343,7 @@ export default function ProjectContent() {
               </div>
             </Popup>
           }
-          {openSettings &&
+          {projectSettings &&
             <Popup closeButton={() => {
               setOpenSettings(false);
               setProjectSettings(false);
@@ -368,40 +351,122 @@ export default function ProjectContent() {
               setRename(false);
               setMenageMembers(false);
             }}>
-              <div>
+              <div className={styles.projectSettingsPopup}>
+                <nav>
+                  <button onClick={() => {
+                    setRename(true);
+                    setMenageMembers(false);
+                    setDeleteProject(false);
+                  }}
+                    style={rename ? { opacity: 0.5 } : {}}
+                  >
+                    Rename
+                  </button>
+                  <button onClick={() => {
+                    setMenageMembers(true);
+                    setRename(false);
+                    setDeleteProject(false);
+                  }}
+                    style={menageMembers ? { opacity: 0.5 } : {}}
+                  >
+                    Members
+                  </button>
+                  <button onClick={() => {
+                    setDeleteProject(true);
+                    setRename(false);
+                    setMenageMembers(false);
+                  }}
+                    style={deleteProject ? { opacity: 0.5 } : {}}
+                  >
+                    Delete
+                  </button>
+                </nav>
+                {!rename && !menageMembers && !deleteProject &&
+                  <div className={styles.noOption}>
+                    <p>
+                      Please select an option from the menu
+                    </p>
+                  </div>
+                }
                 {rename &&
-                  <input type="text" defaultValue={projectName} onChange={(e) => {
-                    setProjectName(e.currentTarget.value);
-                  }} />
+                  <div className={styles.renameProject}>
+                    <h4>Change current project name</h4>
+                    <TextField
+                      type="text"
+                      label="Project Name"
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'rgba(0, 0, 0, 1)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#fff',
+                          }
+                        },
+                        '& .MuiOutlinedInput-input': {
+                          color: '#393939',
+                        },
+                        '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input': {
+                          color: '#fff',
+                        },
+                        '& .MuiInputLabel-root': {
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#fff',
+                        },
+                      }}
+                      onChange={(e) => {
+                        setProjectName(e.currentTarget.value);
+                      }} />
+                  </div>
                 }
                 {
                   menageMembers &&
-                  <div>
-                    <h3>members</h3>
+                  <div className={styles.members}>
+                    <h3>Select members to add</h3>
                     <ul>
-                      {/* {members.map((member, index) => {
-                        return <li key={index}>{member}</li>
-                      })} */}
+                      {users.map((user, index) => {
+                        return <li
+                          key={index}
+                          className={styles.member}>
+                          {user.username}
+                          {!addedUsers.includes(user.id) ?
+                            <button onClick={() => {
+                              setAddedUsers([...addedUsers, user.id]);
+                            }}>
+                              <AddIcon className={styles.addIcon} />
+                            </button> :
+                            <DoneIcon />}
+
+                        </li>
+                      })}
+
                     </ul>
                   </div>
                 }
                 {deleteProject &&
 
-                  <div>
+                  <div className={styles.delete}>
                     <h3>are you sure you want to delete this project?</h3>
-                    <button onClick={() => {
-                      deleteProjectById(selectedProject);
-                      setOpenSettings(false);
-                    }}>
-                      Delete
-                    </button>
-                    <button onClick={() => {
-                      setOpenSettings(false)
-                      setDeleteProject(false);
-                      setProjectSettings(false);
-                    }}>
-                      Cancel
-                    </button>
+                    <div className={styles.deleteContent}>
+
+                      <button onClick={() => {
+                        deleteProjectById(selectedProject);
+                        setOpenSettings(false);
+                      }}
+                        className={styles.deleteButton}
+                      >
+                        Delete
+                      </button>
+                      <button onClick={() => {
+                        setOpenSettings(false)
+                        setDeleteProject(false);
+                        setProjectSettings(false);
+                      }}>
+                        Cancel
+                      </button>
+                    </div>
                   </div>
 
                 }
@@ -427,6 +492,7 @@ export default function ProjectContent() {
             addProject &&
             <Popup closeButton={() => setAddProject(false)}>
               <div className={styles.addProject}>
+                <h2>Add your new project</h2>
                 <div className={styles.inputContainer}>
                   <h3>Set yout new project name</h3>
                   <TextField
@@ -459,16 +525,14 @@ export default function ProjectContent() {
                         color: '#fff',
                       },
                     }}
-
                   />
                 </div>
                 <button className={styles.saveButton}
                   onClick={() => {
-                    if (projectName){
+                    if (projectName) {
                       addNewProject();
                     }
                     setAddProject(!addProject);
-
                   }}>
                   save
                   <SaveOutlinedIcon />

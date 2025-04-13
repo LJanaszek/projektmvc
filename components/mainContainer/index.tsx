@@ -1,3 +1,4 @@
+import Image from "next/image";
 import styles from "../../styles/mainContainer.module.scss"
 import Footer from "../footer";
 import ProjectContent from "../projectContent";
@@ -7,8 +8,8 @@ const MainContainer = () => {
     
     return (
         <div className={styles.mainContainer}>
-            {/* <img src="/logo.png" alt="logo" width={100} height={100}></img> */}
-            <h1 className={styles.title}>Project menager</h1>
+            <Image src="/logo.png" alt="logo" width={280} height={120} />
+            
                 <ProjectContent />
                 <Footer></Footer>
         </div>

@@ -3,22 +3,26 @@ export default function Footer() {
     const currentDate = new Date()
     return <div className={styles.footer}>
         <div className={styles.content}>
-
             <div className={styles.creators}>
                 <h3>Project created by: </h3>
-                <ul>
-                    <li>Sebastian Golatowski</li>
-                    <li>Hubert Getter</li>
-                    <li>Łukasz Janaszek</li>
-                </ul>
+                <div className={styles.creatorsList}>
+                    <div className={styles.team}>
+                        <h4>Programmers:</h4>
+                        <ul>
+                            <li>Sebastian Golatowski - back-end developer</li>
+                            <li>Łukasz Janaszek front-end developer</li>
+                        </ul>
+                    </div>
+                    <div className={styles.team}>
+                        <h4>Jakiś parobas (xD):</h4>
+                        <ul>
+                            <li>Hubert Getter</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            {/* <div>
-                <h3>Privacy Policy</h3>
-                <p></p>
-            </div> */}
         </div>
         <div>
-
             &copy; {currentDate.getFullYear()}
         </div>
 
