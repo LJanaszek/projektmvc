@@ -22,6 +22,9 @@ export default async function handler(
     const task = await prisma.task.findFirst({
         where:{
             id:taskId
+        },
+        include:{
+            comments:true
         }
     })
 

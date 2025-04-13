@@ -15,9 +15,9 @@ export default async function handler(
     const reqUser = authenticateUser(req, res);
     if (!reqUser) return;
 
-    const { label, projectId } = req.body
+    const { label, projectId, status } = req.body
 
-    if( typeof projectId!=="string" || typeof label!== "string"){
+    if( typeof projectId!=="string" || typeof label!== "string" || typeof status!=="string"){
         return res.status(400).json({ 
             message:"Missing/Invalid argument/s in request"
         })
@@ -29,7 +29,7 @@ export default async function handler(
     const task = await prisma.task.create({
         data:{
             label:label,
-            status:"to do",
+            status:status,
             projectId:projectId
         }
     })
