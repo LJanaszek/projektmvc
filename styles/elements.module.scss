@@ -1,21 +1,40 @@
-.navigation {
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  padding: 1em;
-  border-right: 2px solid var(--color4);
-  ul {
-    list-style: none;
-    margin: 1em 0;
-    li {
-      line-height: 1.5em;
-    }
-  }
-}
 .projects {
   display: grid;
-  grid-template-columns: 20% 80%;
+  grid-template-columns: 16% 81%;
+  gap: 1%;
+  justify-content: center;
+  .navigation,
+  .projectContent {
+    border-radius: 1em !important;
+    background-color: var(--color3);
+  }
   .navigation {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1em;
+    // border-right: 7px solid var(--color9);
+    .projectHeader{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      button{
+        background-color: unset;
+        border: unset;
+        color: white;
+        transition: all ease-in-out 0.3s;
+        &:hover{
+          color: var(--color9);
+        }
+      }
+    }
+    ul {
+      list-style: none;
+      margin: 1em 0;
+      li {
+        line-height: 1.5em;
+      }
+    }
     .projectList {
       list-style: none;
       li:hover {
@@ -30,12 +49,31 @@
 
     .tasks {
       overflow: auto;
-      .projectHeader {
+      padding-bottom: 2%;
+      &:has(.noProject) {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        &:has(.noProject) {
+          justify-content: center;
+          align-items: center;
+          height: 80vh;
+          .projectInfo {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+          }
+        }
+      }
 
+      .projectHeader {
         .projectInfo {
+          &:has(.noProject) {
+            text-align: center;
+          }
+          .noProject {
+            text-align: center;
+          }
         }
         .projectActions {
           display: grid;
@@ -44,10 +82,10 @@
           .projectSettings {
             border: unset;
             background-color: unset;
-            color: black;
+            color: var(--color4);
             transition: 0.3s;
             &:hover {
-              opacity: 0.2;
+              color: var(--color9);
               transition: 0.3s;
             }
           }
@@ -56,7 +94,7 @@
             // height: 10vh;
             top: 0;
             right: 2em;
-            .settings{
+            .settings {
               position: absolute;
               right: 5em;
               display: grid;
@@ -65,8 +103,8 @@
               gap: 1em;
               background-color: white;
               z-index: 100;
-              button{
-                padding: .5em 1em;
+              button {
+                padding: 0.5em 1em;
                 border: unset;
                 background-color: unset;
                 color: black;
@@ -82,20 +120,21 @@
       }
       .taskHeader {
         background-color: var(--color9);
-        color: var(--color3);
-        padding: 0.5em;
+        color: var(--color4);
+        padding: 0.9em 0.5em;
         display: flex;
         justify-content: space-between;
         background-color: var(--color9);
         display: flex;
         align-items: center;
+        border-radius: 1em 1em 0 0;
         button {
           border: unset;
           background-color: unset;
-          color: white;
           transition: 0.3s;
+          color: var(--color4);
           &:hover {
-            opacity: 0.2;
+            color: var(--color3);
             transition: 0.3s;
           }
         }
@@ -105,39 +144,58 @@
       list-style: none;
     }
     .task {
-      width: 70vw;
-      display: flex;
+      width: 75vw;
+      display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 2em;
+      gap: 3em;
       min-height: 50vh;
+      margin: 0 auto;
+      margin-top: 2em;
     }
     .toDo {
-      min-width: 17vw;
-      width: fit-content;
+      background-color: var(--color4);
+      width: 100%;
       display: block;
+      border: 2px solid var(--color5);
+      border-radius: 1.1em;
     }
     .taskSingleRow {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-radius: 5px;
-      box-shadow: 2px black;
-      padding: 0.8em 0;
+      padding: 0.2em 0.6em;
+      color: var(--color3);
+      font-weight: 300;
+      p {
+        font-size: 18px !important;
+      }
 
       button {
         border: unset;
         transition: ease-in-out 0.3s;
+        background-color: unset;
+        background-color: unset;
+        color: var(--color9);
+        svg {
+          background-color: unset;
+        }
         &:hover {
-          opacity: 0.2;
           transition: ease-in-out 0.3s;
+          opacity: 0.4;
         }
       }
     }
   }
 }
 
-.changeTask {
+.changeTask, .addProject {
+  width: 90vw;
   padding: 0.2em;
+  label {
+    font-weight: 700;
+    font-size: 18px;
+  }
   .changeLabel,
   .changeDescription {
     display: flex;
@@ -153,6 +211,36 @@
   .changeLabel {
   }
   .changeDescription {
+    textarea {
+      min-height: 10vh;
+      width: 100%;
+      resize: none;
+    }
+  }
+  .comments {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    .commentsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+      padding: 1em;
+      background-color: var(--color9);
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+      .singleComment {
+        background-color: var(--color3);
+        border-radius: 10px;
+        padding: 0.5em 1em;
+        h4 {
+          font-weight: 600;
+          font-size: 16px;
+        }
+        p {
+          font-size: 14px !important;
+        }
+      }
+    }
   }
   .saveButton {
     background-color: var(--color9);
@@ -173,5 +261,24 @@
       opacity: 0.7;
       transition: ease-in-out 0.3s;
     }
+  }
+}
+.addProject{
+  .inputContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    margin: 0 auto;
+    background-color: var(--color9);
+    padding: 2em;
+    border-radius: 1em;
+    margin-top: 1em;
+    width: 30%;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+  }
+  .input{
+    width: 100%;
+    font-size: 24px;
+    color: var(--color4) !important;
   }
 }
