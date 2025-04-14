@@ -1,9 +1,6 @@
-import { LockOutlined } from "@mui/icons-material";
 import {
     Container,
-    CssBaseline,
     Box,
-    Avatar,
     Typography,
     TextField,
     Button,
@@ -23,9 +20,9 @@ const LoginPage = () => {
         const res = await fetch("/api/auth/user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                "username":email,
-                "password":password
+            body: JSON.stringify({
+                "username": email,
+                "password": password
             }),
         });
 
@@ -40,7 +37,6 @@ const LoginPage = () => {
     return (
 
         <Container maxWidth="xs">
-            <CssBaseline />
             <Box
                 sx={{
                     mt: 20,
@@ -49,9 +45,6 @@ const LoginPage = () => {
                     alignItems: "center",
                 }}
             >
-                <Avatar sx={{ m: 1, bgcolor: "primary.light" }}>
-                    <LockOutlined />
-                </Avatar>
                 <Typography variant="h5">LoginPage</Typography>
                 <Box sx={{ mt: 1 }}>
                     <TextField
@@ -63,6 +56,28 @@ const LoginPage = () => {
                         name="email"
                         autoFocus
                         value={email}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'rgba(0, 0, 0, 1)',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#fff',
+                                }
+                            },
+                            '& .MuiOutlinedInput-input': {
+                                color: '#393939',
+                            },
+                            '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input': {
+                                color: '#fff',
+                            },
+                            '& .MuiInputLabel-root': {
+                                color: 'rgba(255, 255, 255, 0.5)',
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#fff',
+                            },
+                        }}
                         onChange={(e) => setEmail(e.target.value)}
                     />
 
@@ -78,17 +93,61 @@ const LoginPage = () => {
                         onChange={(e) => {
                             setPassword(e.target.value);
                         }}
+                        sx={{
+                            '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                    borderColor: 'rgba(0, 0, 0, 1)',
+                                },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: '#fff',
+                                }
+                            },
+                            '& .MuiOutlinedInput-input': {
+                                color: '#393939',
+                            },
+                            '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input': {
+                                color: '#fff',
+                            },
+                            '& .MuiInputLabel-root': {
+                                color: 'rgba(255, 255, 255, 0.5)',
+                            },
+                            '& .MuiInputLabel-root.Mui-focused': {
+                                color: '#fff',
+                            },
+                        }}
                     />
 
                     <Button
                         fullWidth
                         variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
+                        sx={{
+                            mt: 3,
+                            mb: 2,
+                            backgroundColor: 'rgba(0, 0, 0, 1)',
+                            border: '1px solid #fff',
+                            color: '#fff',
+                            transition: 'all ease-in-out 0.3s',
+                            '&:hover': {
+                                backgroundColor: 'rgba(55, 55, 55, 0.9)',
+                                border: '1px solid #000',
+                                color: 'rgb(157, 157, 157)',
+                            },
+                            padding: '1.5em',
+
+                        }}
                         onClick={handleSubmit}
                     >
                         LoginPage
                     </Button>
-                    <Link href="/register">You don&apos;t have an account?</Link>
+                    <Link href="/register"
+                        style={{
+                            color: 'rgba(255, 255, 255, 0.5)',
+                            textDecoration: 'none',
+                            transition: 'all ease-in-out 0.3s',
+                        }}
+                    >
+                        You don&apos;t have an account?
+                    </Link>
                     {error && <Typography color="error">{error}</Typography>}
                 </Box>
             </Box>

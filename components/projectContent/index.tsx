@@ -30,7 +30,6 @@ interface Task {
 }
 export default function ProjectContent() {
   const [selectedProject, setSelectedProject] = useState('');
-  const [projects, setProjects] = useState(data.projects);
   const [changeState, setChangeState] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [taskLabel, setTaskLabel] = useState("");
@@ -42,17 +41,21 @@ export default function ProjectContent() {
   const [rename, setRename] = useState(false);
   const [menageMembers, setMenageMembers] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
-  const [projectName, setProjectName] = useState(data.projects.find((project: Project) => project.id === selectedProject)?.name || '');
   const [addProject, setAddProject] = useState(false);
   const [addedUsers, setAddedUsers] = useState([]);
   const users = UserData;
-
+  // const userId = ;
+  const [projects, setProjects] = useState(data.projects);
+  console.log(projects);
+  const [projectName, setProjectName] = useState((data.projects.find((project: Project) => project.id === selectedProject)?.name) || '');
+  // const [userName, setUserName] = useState(false);
+ 
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState(data.tasks);
   const labels = ['To Do', 'In Progress', 'Done'];
 
 
-  console.log(users);
+  
 
   function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));

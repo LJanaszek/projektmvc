@@ -1,0 +1,9 @@
+{
+    "assignedUsers" :[
+        {
+        "userId": "1",
+        "projectId": "1",
+        "role": "admin"    
+    }
+]
+}
