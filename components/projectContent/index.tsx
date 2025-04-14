@@ -11,6 +11,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextField } from "@mui/material";
 import { UserData } from "@/data/user";
 import DoneIcon from '@mui/icons-material/Done';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 
 interface Project {
@@ -459,32 +460,45 @@ export default function ProjectContent() {
                         menage members
                       </button>
                     </nav>
-                    <h3>Select members to add</h3>
                     {showMembersList &&
                       <div>
+                        <h3>Assigned users</h3>
                         {/* display assigned users */}
                       </div>
                     }
                     {!showMembersList &&
-                      <ul>
-                        {users.map((user, index) => {
-                          return <li
-                            key={index}
-                            className={styles.member}>
-                            {user.username}
-                            {!addedUsers.includes(user.id) ?
-                              <button onClick={() => {
-                                setAddedUsers([...addedUsers, user.id]);
-                                menageUsers(user.id);
-                              }}>
-                                <AddIcon className={styles.addIcon} />
-                              </button> :
-                              <DoneIcon />}
+                      <div>
+                        <h3>Select members to add</h3>
+                        <ul>
 
-                          </li>
-                        })}
+                          {users.map((user, index) => {
+                            return <li
+                              key={index}
+                              className={styles.member}>
+                              {user.username}
+                              <section>
+                                {addedUsers.includes(user.id) ? 
+                                <button onClick={()=>{
+                                  setAddedUsers(addedUsers.filter((id) => id !== user.id));
+                                  menageUsers(user.id);
+                                }}>
+                                  <RemoveIcon className={styles.removeIcon} />
+                                </button> : <button></button>}
+                                
+                                {!addedUsers.includes(user.id) ?
+                                  <button onClick={() => {
+                                    setAddedUsers([...addedUsers, user.id]);
+                                    menageUsers(user.id);
+                                  }}>
+                                    <AddIcon className={styles.addIcon} />
+                                  </button> :
+                                  <DoneIcon />}
+                              </section>
+                            </li>
+                          })}
 
-                      </ul>
+                        </ul>
+                      </div>
                     }
                   </div>
                 }
