@@ -48,14 +48,15 @@ export default function ProjectContent() {
   const [projects, setProjects] = useState(data.projects);
   console.log(projects);
   const [projectName, setProjectName] = useState((data.projects.find((project: Project) => project.id === selectedProject)?.name) || '');
+  const [showMembersList, setShowMembersList] = useState(false);
   // const [userName, setUserName] = useState(false);
- 
+
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState(data.tasks);
   const labels = ['To Do', 'In Progress', 'Done'];
 
 
-  
+
 
   function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
@@ -436,26 +437,55 @@ export default function ProjectContent() {
                 {
                   menageMembers &&
                   <div className={styles.members}>
+                    <nav
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        margin: '0 auto',
+                        marginTop: '3em',
+                        gap: '3em',
+                        justifyContent: 'space-evenly',
+                        maxWidth: '50%'
+                      }}>
+                      <button onClick={() => { setShowMembersList(true) }}
+                        style={showMembersList ? { opacity: 0.5 } : {}}
+                      >
+                        show project members
+                      </button>
+                      <button
+                        onClick={() => { setShowMembersList(false) }}
+                        style={!showMembersList ? { opacity: 0.5 } : {}}
+                      >
+                        menage members
+                      </button>
+                    </nav>
                     <h3>Select members to add</h3>
-                    <ul>
-                      {users.map((user, index) => {
-                        return <li
-                          key={index}
-                          className={styles.member}>
-                          {user.username}
-                          {!addedUsers.includes(user.id) ?
-                            <button onClick={() => {
-                              setAddedUsers([...addedUsers, user.id]);
-                              menageUsers(user.id);
-                            }}>
-                              <AddIcon className={styles.addIcon} />
-                            </button> :
-                            <DoneIcon />}
+                    {showMembersList &&
+                      <div>
+                        {/* display assigned users */}
+                      </div>
+                    }
+                    {!showMembersList &&
+                      <ul>
+                        {users.map((user, index) => {
+                          return <li
+                            key={index}
+                            className={styles.member}>
+                            {user.username}
+                            {!addedUsers.includes(user.id) ?
+                              <button onClick={() => {
+                                setAddedUsers([...addedUsers, user.id]);
+                                menageUsers(user.id);
+                              }}>
+                                <AddIcon className={styles.addIcon} />
+                              </button> :
+                              <DoneIcon />}
 
-                        </li>
-                      })}
+                          </li>
+                        })}
 
-                    </ul>
+                      </ul>
+                    }
                   </div>
                 }
                 {deleteProject &&
