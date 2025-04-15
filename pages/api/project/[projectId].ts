@@ -39,7 +39,7 @@ export default async function handler(
             }
         })
 
-        return res.status(200).json({tasks:tasks})
+        return res.status(200).json(tasks)
     }
     else if(req.method=="DELETE"){
         try{

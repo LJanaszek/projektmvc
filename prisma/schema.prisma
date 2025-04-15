@@ -28,7 +28,6 @@ model User {
 model Project {
   id          String   @id @default(uuid())
   name        String @unique
-  descryption String
   createdAt   DateTime @default(now())
   
   assignedUsers AssignedUsers[]
@@ -48,6 +47,7 @@ model AssignedUsers {
 model Task {
   id         String   @id @default(uuid())
   label      String
+  descryption String
   status     String
   assignedTo String?
   projectId  String
@@ -57,7 +57,7 @@ model Task {
   project      Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   comments Comment[]
 
-   @@unique([label, projectId])
+  //  @@unique([label, projectId])
 }
 
 model Comment {

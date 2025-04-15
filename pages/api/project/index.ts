@@ -46,21 +46,21 @@ export default async function handler(
             const newProject = await prisma.project.create({
                 data:{
                     name:name,
-                    descryption:descryption || ""
                 }
             })
 
             await prisma.assignedUsers.create({
                 data:{
-                    userId:reqUser.id,
-                    projectId:newProject.id,
+                    userId:reqUser.id as string,
+                    projectId:newProject.id ,
                 }
             })
 
             return res.status(201).json({project:newProject});
         }
+     
         catch(e){
-            return res.status(500).json({message:"Error with serv"});
+            return res.status(500).json({message:e});
         }
     }
 }

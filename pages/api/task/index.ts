@@ -15,11 +15,12 @@ export default async function handler(
     const reqUser = authenticateUser(req, res);
     if (!reqUser) return;
 
-    const { label, projectId, status } = req.body
+    const { label, projectId, status, descryption } = req.body
 
     if( typeof projectId!=="string" || typeof label!== "string" || typeof status!=="string"){
         return res.status(400).json({ 
-            message:"Missing/Invalid argument/s in request"
+            message:"Missing/Invalid argument/s in request",
+            projectId, label, status
         })
     }
 
@@ -30,7 +31,8 @@ export default async function handler(
         data:{
             label:label,
             status:status,
-            projectId:projectId
+            projectId:projectId,
+            descryption:descryption || " "
         }
     })
 
