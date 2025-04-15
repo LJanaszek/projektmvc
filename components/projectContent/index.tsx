@@ -286,9 +286,18 @@ export default function ProjectContent() {
       <div className={styles.navigation}>
         <div className={styles.projectHeader}>
           <h2>Projects </h2>
-          <button onClick={() => {
+          <button onClick={async () => {
             setAddProject(true)
             // miejsce na request do usunięcia projektu
+            // const res = await fetch(`/api/project/${project.id}`, {
+            //   method: "DELETE",
+            //   headers: {
+            //     "Content-Type": "application/json"
+            //   },
+            // })
+            // if(res.status !== 200){
+            //   console.log("erro")
+            // } 
           }}>
             <AddIcon />
           </button>
