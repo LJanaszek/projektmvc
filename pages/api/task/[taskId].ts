@@ -40,6 +40,7 @@ export default async function handler(
                 id:taskId
             }
         })
+        return res.status(200).json({message: "OK"})
     }
     else if(req.method=="PATCH"){
         const { label, status, assignedTo } = req.body;

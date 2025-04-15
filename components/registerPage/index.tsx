@@ -143,17 +143,11 @@ export default function ProjectContent() {
   }, [selectedProject, createNewTask, taskLabel, taskDescription, taskStatus, tasks, fetchTasks]);
 
 
-  async function deleteTaskFromTasks(id: string) {
+  function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
-    // const res = await fetch(`/api/task/${id}`, {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    // })
-    // if(res.status !== 200){
-    //   console.log("erro")
-    // } 
+
+    
+    // miejsce na request 
   }
 
   function menageUsers(userId: string) {
@@ -193,42 +187,25 @@ export default function ProjectContent() {
     }
   }
 
-  async function changeTaskStatus(id: string, taskStatus: string) {
+  function changeTaskStatus(id: string, taskStatus: string) {
     setTasks(tasks.map((task: Task) => {
       if (task.id === id) {
         return { ...task, status: taskStatus };
       }
       return task;
     }));
-    // const res = await fetch(`/api/task/${id}`,{
-    //   method:"PATCH",
-    //   headers:{
-    //     "Content-Type": "application/json"
-    //   },
-    //   body:JSON.stringify({
-    //     status:taskStatus
-    //   })
-    // })
   }
 
-  async function changeTaskLabel(id: string, taskLabel: string, taskDescription: string) {
+  function changeTaskLabel(id: string, taskLabel: string, taskDescription: string) {
     setTasks(tasks.map((task: Task) => {
       if (task.id === id) {
         return { ...task, label: taskLabel, description: taskDescription };
       }
       return task;
     }));
-    // const res = await fetch(`/api/task/${id}`,{
-    //   method:"PATCH",
-    //   headers:{
-    //     "Content-Type": "application/json"
-    //   },
-    //   body:JSON.stringify({
-    //     label:taskLabel,
-    //     description:taskDescription
-    //   })
-    // })
   }
+
+
 
   function renameProject() {
     setProjects(projects.map((project: Project) => {
@@ -239,48 +216,9 @@ export default function ProjectContent() {
     }))
   }
 
-  //Z bazunią
-  // async function renameProject() {
-  //   const updatedProjects = await Promise.all(
-  //     projects.map(async (project: Project) => {
-  //       if (project.id === selectedProject) {
-  //         const res = await fetch(`/api/task/${project.id}`, {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json"
-  //           },
-  //           body: JSON.stringify({
-  //             name: projectName
-  //           })
-  //         });
-  
-  //         if (res.status !== 200) {
-  //           console.log("error updating project name");
-  //         }
-  
-  //         return { ...project, name: projectName };
-  //       }
-  
-  //       return project;
-  //     })
-  //   );
-  
-  //   setProjects(updatedProjects);
-  // }
-
-  async function deleteProjectById(id: string) {
+  function deleteProjectById(id: string) {
     setProjects(projects.filter((project: Project) => project.id !== id));
-    // const res = await fetch(`/api/project/${id}`, {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    // })
-    // if(res.status !== 200){
-    //   console.log("erro")
-    // } 
   }
-
   return (
     <div className={styles.projects}>
       <div className={styles.navigation}>

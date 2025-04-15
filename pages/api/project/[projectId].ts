@@ -56,18 +56,18 @@ export default async function handler(
 
     }
     else if(req.method=="PATCH"){
-        const {name, description} = req.body;
-        const updateData: any = {};
+        const {name} = req.body;
 
-        if (name) updateData.name = name;
-        if (description != null) updateData.description = description;
-
+        if(!name) return res.status(400)
+        
         try{
             await prisma.project.update({
                 where:{
                     id:projectId
                 },
-                data:updateData
+                data:{
+                    name:name
+                }
             })
 
             return res.status(200).json({ message: 'Project updated successfully' });
