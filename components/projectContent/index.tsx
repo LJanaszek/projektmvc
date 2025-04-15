@@ -11,6 +11,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextField } from "@mui/material";
 import { UserData } from "@/data/user";
 import DoneIcon from '@mui/icons-material/Done';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 
 interface Project {
@@ -30,7 +31,6 @@ interface Task {
 }
 export default function ProjectContent() {
   const [selectedProject, setSelectedProject] = useState('');
-  const [projects, setProjects] = useState(data.projects);
   const [changeState, setChangeState] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [taskLabel, setTaskLabel] = useState("");
@@ -42,17 +42,22 @@ export default function ProjectContent() {
   const [rename, setRename] = useState(false);
   const [menageMembers, setMenageMembers] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
-  const [projectName, setProjectName] = useState(data.projects.find((project: Project) => project.id === selectedProject)?.name || '');
   const [addProject, setAddProject] = useState(false);
   const [addedUsers, setAddedUsers] = useState([]);
   const users = UserData;
+  // const userId = ;
+  const [projects, setProjects] = useState(data.projects);
+  console.log(projects);
+  const [projectName, setProjectName] = useState((data.projects.find((project: Project) => project.id === selectedProject)?.name) || '');
+  const [showMembersList, setShowMembersList] = useState(false);
+  // const [userName, setUserName] = useState(false);
 
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState(data.tasks);
   const labels = ['To Do', 'In Progress', 'Done'];
 
 
-  console.log(users);
+
 
   function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
@@ -433,26 +438,68 @@ export default function ProjectContent() {
                 {
                   menageMembers &&
                   <div className={styles.members}>
-                    <h3>Select members to add</h3>
-                    <ul>
-                      {users.map((user, index) => {
-                        return <li
-                          key={index}
-                          className={styles.member}>
-                          {user.username}
-                          {!addedUsers.includes(user.id) ?
-                            <button onClick={() => {
-                              setAddedUsers([...addedUsers, user.id]);
-                              menageUsers(user.id);
-                            }}>
-                              <AddIcon className={styles.addIcon} />
-                            </button> :
-                            <DoneIcon />}
+                    <nav
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        margin: '0 auto',
+                        marginTop: '3em',
+                        gap: '3em',
+                        justifyContent: 'space-evenly',
+                        maxWidth: '50%'
+                      }}>
+                      <button onClick={() => { setShowMembersList(true) }}
+                        style={showMembersList ? { opacity: 0.5 } : {}}
+                      >
+                        show project members
+                      </button>
+                      <button
+                        onClick={() => { setShowMembersList(false) }}
+                        style={!showMembersList ? { opacity: 0.5 } : {}}
+                      >
+                        menage members
+                      </button>
+                    </nav>
+                    {showMembersList &&
+                      <div>
+                        <h3>Assigned users</h3>
+                        {/* display assigned users */}
+                      </div>
+                    }
+                    {!showMembersList &&
+                      <div>
+                        <h3>Select members to add</h3>
+                        <ul>
 
-                        </li>
-                      })}
+                          {users.map((user, index) => {
+                            return <li
+                              key={index}
+                              className={styles.member}>
+                              {user.username}
+                              <section>
+                                {addedUsers.includes(user.id) ? 
+                                <button onClick={()=>{
+                                  setAddedUsers(addedUsers.filter((id) => id !== user.id));
+                                  menageUsers(user.id);
+                                }}>
+                                  <RemoveIcon className={styles.removeIcon} />
+                                </button> : <button></button>}
+                                
+                                {!addedUsers.includes(user.id) ?
+                                  <button onClick={() => {
+                                    setAddedUsers([...addedUsers, user.id]);
+                                    menageUsers(user.id);
+                                  }}>
+                                    <AddIcon className={styles.addIcon} />
+                                  </button> :
+                                  <DoneIcon />}
+                              </section>
+                            </li>
+                          })}
 
-                    </ul>
+                        </ul>
+                      </div>
+                    }
                   </div>
                 }
                 {deleteProject &&
