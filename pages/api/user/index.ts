@@ -49,6 +49,6 @@ export default async function handler(
             }
         })
 
-        return res.status(200).json({message:"USer deletod form project"})
+        return res.status(200).json({message:"User deleted form project"})
     }    
 }

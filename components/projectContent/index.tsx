@@ -44,20 +44,18 @@ export default function ProjectContent() {
   const [menageMembers, setMenageMembers] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [addProject, setAddProject] = useState(false);
-  const [addedUsers, setAddedUsers] = useState();
+  const [addedUsers, setAddedUsers] = useState([]);
   const [nameOccupied, setNameOccupied] = useState(false);
-  const users = UserData;
+  const [users, setUsers] = useState([]);
   // const userId = ;
   const [projects, setProjects] = useState([]);
   const [projectName, setProjectName] = useState('');
   const [showMembersList, setShowMembersList] = useState(false);
   // const [userName, setUserName] = useState(false);
-  const [counter, setCounter] = useState(0);
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState([]);
   const labels = ['To Do', 'In Progress', 'Done'];
   // let count = 0
-
 
 
 
@@ -84,7 +82,9 @@ export default function ProjectContent() {
 
   useEffect(() => {
     const fetchTasks = async () => {
-
+      if (!selectedProject) {
+        return
+      }
       const res = await fetch(`/api/project/${selectedProject}`, {
         method: "GET",
         headers: {
@@ -93,16 +93,7 @@ export default function ProjectContent() {
       })
       const data = await res.json()
       if (res.status == 200) {
-        console.log(data, "96")
-        setTasks([...tasks, {
-          id: data.task.id,
-          label: data.task.label,
-          description: data.task.description,
-          status: data.task.status,
-          assigned_to: "marek towarek",
-          project_id: data.task.projectId,
-          created_at: data.task.createdAt
-        }])
+        setTasks(data.tasks);
       }
       else {
         console.log("no i chuj, no i cześć") // ~Hubert Getter~
@@ -111,62 +102,89 @@ export default function ProjectContent() {
     fetchTasks()
 
 
-  }, [counter]);
+  }, [selectedProject]);
 
-  console.log(tasks, "----")
-  useEffect(() => {
-
-    const addTask = async () => {
-      const res = await fetch(`/api/task`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          label: taskLabel,
-          description: taskDescription,
-          status: taskStatus,
-          projectId: selectedProject,
-
-        })
-      })
-      if (res.status == 201) {
-        const data = await res.json()
-        setTasks([...tasks, {
-          id: data.task.id,
-          label: data.task.label,
-          descryption: data.task.description,
-          status: data.task.status,
-          assignedTo: "marek towarek",
-          projectId: data.task.projectId,
-          createdAt: data.task.createdAt,
-        }])
-
+  const allUsers = async () => {
+    const res = await fetch(`/api/user/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
       }
+    })
+    const users = await res.json();
+    setUsers(users.users);
+
+  }
+
+  const assignedUsers = async () => {
+    // @Sebastian-Golatowski - zrobienie requesta do wyciągania userów przypisanych do projektu
+    //setAddedUsers(users.users);
+
+    const res = await fetch(`/api/user/${selectedProject}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const users = await res.json();
+    setAddedUsers(users);
+  }
+
+
+
+  const addTask = async () => {
+
+    const res = await fetch(`/api/task`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        label: taskLabel,
+        description: taskDescription,
+        status: taskStatus,
+        projectId: selectedProject,
+
+      })
+    })
+    if (res.status == 201) {
+      const data = await res.json()
+      setTasks([...tasks, {
+        id: data.task.id,
+        label: data.task.label,
+        descryption: data.task.description,
+        status: data.task.status,
+        assignedTo: "",
+        projectId: data.task.projectId,
+        createdAt: data.task.createdAt,
+      }])
     }
+    setCreateNewTask(false);
     if (selectedProject) {
 
-      console.log(selectedProject)
       if (createNewTask && taskLabel && taskDescription && taskStatus) {
 
-        addTask();
-        setCreateNewTask(false);
       }
     }
-  }, [selectedProject, createNewTask, taskLabel, taskDescription, taskStatus, tasks]);
+  }
 
+
+  // Raj którego nocą pragniesz
+  // tak jak ja
+  // to niebo, to raj
+  // dalej dalej proszę leć, proszę gnaj.
 
   async function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
-    // const res = await fetch(`/api/task/${id}`, {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    // })
-    // if(res.status !== 200){
-    //   console.log("erro")
-    // } 
+    const res = await fetch(`/api/task/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    if (res.status !== 200) {
+      console.log("erro")
+    }
   }
 
   function menageUsers(userId: string) {
@@ -212,15 +230,15 @@ export default function ProjectContent() {
       }
       return task;
     }));
-    // const res = await fetch(`/api/task/${id}`,{
-    //   method:"PATCH",
-    //   headers:{
-    //     "Content-Type": "application/json"
-    //   },
-    //   body:JSON.stringify({
-    //     status:taskStatus
-    //   })
-    // })
+    const res = await fetch(`/api/task/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        status: taskStatus
+      })
+    })
   }
 
   async function changeTaskLabel(id: string, taskLabel: string, taskDescription: string) {
@@ -230,67 +248,59 @@ export default function ProjectContent() {
       }
       return task;
     }));
-    // const res = await fetch(`/api/task/${id}`,{
-    //   method:"PATCH",
-    //   headers:{
-    //     "Content-Type": "application/json"
-    //   },
-    //   body:JSON.stringify({
-    //     label:taskLabel,
-    //     description:taskDescription
-    //   })
-    // })
+    const res = await fetch(`/api/task/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        label: taskLabel,
+        descryption: taskDescription
+      })
+    })
   }
 
-  function renameProject() {
-    setProjects(projects.map((project: Project) => {
-      if (project.id === selectedProject) {
-        return { ...project, name: projectName };
-      }
-      return project;
-    }))
+
+  async function renameProject() {
+    const updatedProjects = await Promise.all(
+      projects.map(async (project: Project) => {
+        if (project.id === selectedProject) {
+          const res = await fetch(`/api/project/${project.id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              name: projectName
+            })
+          });
+
+          if (res.status !== 200) {
+            console.log("error updating project name");
+          }
+
+          return { ...project, name: projectName };
+        }
+
+        return project;
+      })
+    );
+
+    setProjects(updatedProjects);
   }
-
-  //Z bazunią
-  // async function renameProject() {
-  //   const updatedProjects = await Promise.all(
-  //     projects.map(async (project: Project) => {
-  //       if (project.id === selectedProject) {
-  //         const res = await fetch(`/api/task/${project.id}`, {
-  //           method: "PATCH",
-  //           headers: {
-  //             "Content-Type": "application/json"
-  //           },
-  //           body: JSON.stringify({
-  //             name: projectName
-  //           })
-  //         });
-
-  //         if (res.status !== 200) {
-  //           console.log("error updating project name");
-  //         }
-
-  //         return { ...project, name: projectName };
-  //       }
-
-  //       return project;
-  //     })
-  //   );
-
-  //   setProjects(updatedProjects);
-  // }
-
+  console.log(tasks)
   async function deleteProjectById(id: string) {
     setProjects(projects.filter((project: Project) => project.id !== id));
-    // const res = await fetch(`/api/project/${id}`, {
-    //   method: "DELETE",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    // })
-    // if(res.status !== 200){
-    //   console.log("erro")
-    // } 
+
+    const res = await fetch(`/api/project/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    if (res.status !== 200) {
+      console.log("erro")
+    }
   }
 
   return (
@@ -301,15 +311,7 @@ export default function ProjectContent() {
           <button onClick={async () => {
             setAddProject(true)
             // miejsce na request do usunięcia projektu
-            // const res = await fetch(`/api/project/${project.id}`, {
-            //   method: "DELETE",
-            //   headers: {
-            //     "Content-Type": "application/json"
-            //   },
-            // })
-            // if(res.status !== 200){
-            //   console.log("erro")
-            // } 
+
           }}>
             <AddIcon />
           </button>
@@ -319,9 +321,6 @@ export default function ProjectContent() {
             <li key={project.id}
               onClick={() => {
                 setSelectedProject(project.id);
-                console.log(project.id)
-                setCounter(counter + 1);
-                // sessionStorage.setItem('selectedProject', project.name);
               }}>
               {project.name}
             </li>
@@ -372,43 +371,35 @@ export default function ProjectContent() {
                           setTaskDescription('');
                           const newTaskId = tasks.map((task: Task) => task.id).length + 1;
                           setSelectedTaskId(newTaskId.toString());
-                          console.log(selectedProject);
                         }}>
                           <AddIcon />
                         </button>
                       </div>
                       <ul>
-                        <script>
-                          console.log(selectedProject, 123);
-                        </script>
-                        {tasks.filter((task: Task) => task.label.toLowerCase() === label.toLowerCase() && task.projectId.toString() === selectedProject.toString())
+                        {tasks.filter((task: Task) => task.status.toLowerCase() === label.toLowerCase() && task.projectId === selectedProject)
                           .map((task: Task, index: number) => {
-                            console.log(selectedProject, "----", task.projectId);
                             return <div key={index} className={styles.taskSingleRow}>
-                              {task.label}
+                              <p>
+                                {task.label}
+                              </p>
+                              <div className={styles.taskNav}>
+                                <button onClick={() => {
+                                  setChangeState(!changeState);
+                                  setSelectedTaskId(task.id);
+                                  setTaskDescription(task.descryption);
+                                  setTaskLabel(task.label);
+                                }}>
+                                  <DescriptionIcon />
+                                </button>
+
+                                <button onClick={() => {
+                                  deleteTaskFromTasks(task.id);
+                                }}>
+                                  <CloseIcon />
+                                </button>
+                              </div>
                             </div>
                           }
-                            // <div key={index} className={styles.taskSingleRow}>
-                            //   <p>
-                            //     {task.label}
-                            //   </p>
-                            //   <div className={styles.taskNav}>
-                            //     <button onClick={() => {
-                            //       setChangeState(!changeState);
-                            //       setSelectedTaskId(task.id);
-                            //       setTaskDescription(task.descryption);
-                            //       setTaskLabel(task.label);
-                            //     }}>
-                            //       <DescriptionIcon />
-                            //     </button>
-
-                            //     <button onClick={() => {
-                            //       deleteTaskFromTasks(task.id);
-                            //     }}>
-                            //       <CloseIcon />
-                            //     </button>
-                            //   </div>
-                            // </div>
                           )}
                       </ul>
                     </div>
@@ -474,7 +465,6 @@ export default function ProjectContent() {
                   onClick={(e) => {
                     e.preventDefault();
                     changeTaskLabel(selectedTaskId, taskLabel, taskDescription)
-                    console.log(taskLabel, taskDescription);
                     setChangeState(!changeState);
 
                   }}>
@@ -527,9 +517,9 @@ export default function ProjectContent() {
                   <button
                     type="button"
                     className={styles.saveButton}
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={() => {
                       setCreateNewTask(!createNewTask);
+                      addTask();
                     }}>
                     save
                     <SaveOutlinedIcon />
@@ -561,6 +551,8 @@ export default function ProjectContent() {
                     setMenageMembers(true);
                     setRename(false);
                     setDeleteProject(false);
+                    allUsers();
+                    assignedUsers();
                   }}
                     style={menageMembers ? { opacity: 0.5 } : {}}
                   >
@@ -638,13 +630,30 @@ export default function ProjectContent() {
                         onClick={() => { setShowMembersList(false) }}
                         style={!showMembersList ? { opacity: 0.5 } : {}}
                       >
-                        menage members
+                        add members
                       </button>
                     </nav>
                     {showMembersList &&
                       <div>
                         <h3>Assigned users</h3>
-                        {/* display assigned users */}
+                        <ul>
+
+                          {addedUsers.map((user, index) => {
+                            return <li
+                              key={index}
+                              className={styles.member}>
+                              {user.username}
+                              <section>
+                                <button onClick={() => {
+                                  menageUsers(user.id);
+                                }}
+                                >
+                                  <RemoveIcon className={styles.deleteIcon} />
+                                </button>
+                              </section>
+                            </li>
+                          })}
+                        </ul>
                       </div>
                     }
                     {!showMembersList &&
@@ -652,31 +661,24 @@ export default function ProjectContent() {
                         <h3>Select members to add</h3>
                         <ul>
 
-                          {users.map((user, index) => {
-                            return <li
-                              key={index}
-                              className={styles.member}>
-                              {user.username}
-                              <section>
-                                {addedUsers.includes(user.id) ?
-                                  <button onClick={() => {
-                                    setAddedUsers(addedUsers.filter((id) => id !== user.id));
-                                    menageUsers(user.id);
-                                  }}>
-                                    <RemoveIcon className={styles.removeIcon} />
-                                  </button> : <button></button>}
+                          {users.filter((user) => addedUsers.find((addedUser) => addedUser.id !== user.id))
+                            .map((user, index) => {
+                              return <li
+                                key={index}
+                                className={styles.member}>
+                                {user.username}
 
-                                {!addedUsers.includes(user.id) ?
+                                <section>
+
                                   <button onClick={() => {
-                                    setAddedUsers([...addedUsers, user.id]);
+
                                     menageUsers(user.id);
                                   }}>
                                     <AddIcon className={styles.addIcon} />
-                                  </button> :
-                                  <DoneIcon />}
-                              </section>
-                            </li>
-                          })}
+                                  </button>
+                                </section>
+                              </li>
+                            })}
 
                         </ul>
                       </div>
@@ -714,7 +716,6 @@ export default function ProjectContent() {
                       renameProject();
                       setProjectSettings(!projectSettings);
                       setOpenSettings(!openSettings);
-
                       setRename(false);
                       setMenageMembers(false);
                       setDeleteProject(false);

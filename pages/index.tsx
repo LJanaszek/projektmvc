@@ -1,11 +1,14 @@
 import MainContainer from "@/components/mainContainer";
 import styles from "@/styles/Home.module.scss";
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 
 export default function Home() {
+
   const [userName, setUserName] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     fetch("/api/auth/user")
       .then(res => res.json())
@@ -14,11 +17,13 @@ export default function Home() {
           setUserName(data.user.username);
         }
         else {
-          window.location.href = "/login"
+          router.push("/login")
         }
       })
-      .catch(error => { console.error(error); window.location.href = "/login" });
+      .catch(error => { console.error(error); router.push("/login") });
   }, [])
+
+  
   return (
     <>
 
@@ -30,7 +35,7 @@ export default function Home() {
 
         <button onClick={() =>
           fetch("/api/auth/logout")
-            .then(() => window.location.href = "/login")}>
+            .then(() => router.push("/login"))}>
           <LogoutIcon />
         </button>
       </div>

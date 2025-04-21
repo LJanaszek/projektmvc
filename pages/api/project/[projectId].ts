@@ -14,7 +14,7 @@ export default async function handler(
     const reqUser = authenticateUser(req, res);
     if (!reqUser) return;
 
-    let {projectId} = req.query;
+    const {projectId} = req.query;
     if (typeof projectId !== "string") {
         return res.status(400).json({ message: "Invalid project ID" });
     }
@@ -39,7 +39,7 @@ export default async function handler(
             }
         })
 
-        return res.status(200).json(tasks)
+        return res.status(200).json({tasks : tasks})
     }
     else if(req.method=="DELETE"){
         try{

@@ -35,7 +35,7 @@ export default async function handler(
     res.setHeader("Set-Cookie", serialize("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 3600,
+      maxAge: 99999,
       path: "/",
     }));
 
@@ -83,7 +83,7 @@ export default async function handler(
     res.setHeader("Set-Cookie", serialize("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 3600,
+      maxAge: 9999999,
       path: "/",
     }));
 
@@ -93,7 +93,15 @@ export default async function handler(
     const cookies = parse(req.headers.cookie || "");
     const token = cookies.auth_token;
 
-    if (!token) return res.status(401).json({ message: "Not authenticated" });
+    if (!token) {
+      res.setHeader("Set-Cookie", serialize("auth_token", "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 0,
+        path: "/",
+      }));
+      return res.status(401).json({ message: "Not authenticated" });
+    }
 
     try {
       const user = jwt.verify(token, process.env.JWT_SECRET);

@@ -14,7 +14,9 @@ export default async function handler(
     const reqUser = authenticateUser(req, res);
     if (!reqUser) return;
 
-    const taskId = req.query
+    // const taskId = req.query
+
+    const { taskId } = req.query;
     if (typeof taskId !== "string") {
         return res.status(400).json({ message: "Invalid or missing task ID" });
     }
@@ -37,19 +39,20 @@ export default async function handler(
     else if(req.method=="DELETE"){
         await prisma.task.delete({
             where:{
-                id:taskId
+                id:String(taskId)
             }
         })
         return res.status(200).json({message: "OK"})
     }
     else if(req.method=="PATCH"){
-        const { label, status, assignedTo } = req.body;
+        const { label, status, assignedTo, descryption } = req.body;
 
         const updateData: any = {};
 
         if (typeof label === "string") updateData.label = label;
         if (typeof status === "string") updateData.status = status;
         if (typeof assignedTo === "string") updateData.assignedTo = assignedTo;
+        if (typeof descryption === "string") updateData.descryption = descryption
 
         const updatedTask = await prisma.task.update({
             where: { id: taskId },
