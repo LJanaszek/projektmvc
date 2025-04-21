@@ -23,12 +23,12 @@ interface Project {
 }
 interface Task {
   id: string;
-  label: string;
-  description: string;
   status: string;
-  assigned_to: string;
-  project_id: string;
-  created_at: string;
+  assignedTo: string;
+  projectId: string;
+  createdAt: string;
+  label: string;
+  descryption: string;
 }
 export default function ProjectContent() {
   const [selectedProject, setSelectedProject] = useState('');
@@ -52,11 +52,11 @@ export default function ProjectContent() {
   const [projectName, setProjectName] = useState('');
   const [showMembersList, setShowMembersList] = useState(false);
   // const [userName, setUserName] = useState(false);
-
+  const [counter, setCounter] = useState(0);
   // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState([]);
   const labels = ['To Do', 'In Progress', 'Done'];
-  let count =0
+  // let count = 0
 
 
 
@@ -82,25 +82,38 @@ export default function ProjectContent() {
     fetchProjects()
   }, []);
 
-  const fetchTasks = useCallback(async () => {
-    const res = await fetch(`/api/project/${selectedProject}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
+  useEffect(() => {
+    const fetchTasks = async () => {
+
+      const res = await fetch(`/api/project/${selectedProject}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      const data = await res.json()
+      if (res.status == 200) {
+        console.log(data, "96")
+        setTasks([...tasks, {
+          id: data.task.id,
+          label: data.task.label,
+          description: data.task.description,
+          status: data.task.status,
+          assigned_to: "marek towarek",
+          project_id: data.task.projectId,
+          created_at: data.task.createdAt
+        }])
       }
-    })
-    const data = await res.json()
-    if (res.status == 200) {
-      setTasks(data)
-      console.log(data)
+      else {
+        console.log("no i chuj, no i cześć") // ~Hubert Getter~
+      }
     }
-    else {
-      console.log("no i chuj, no i cześć") // ~Hubert Getter~
-    }
-
-  }, [count])
+    fetchTasks()
 
 
+  }, [counter]);
+
+  console.log(tasks, "----")
   useEffect(() => {
 
     const addTask = async () => {
@@ -122,17 +135,17 @@ export default function ProjectContent() {
         setTasks([...tasks, {
           id: data.task.id,
           label: data.task.label,
-          description: data.task.description,
+          descryption: data.task.description,
           status: data.task.status,
-          assigned_to: "",
-          project_id: data.task.projectId,
-          created_at: data.task.createdAt,
+          assignedTo: "marek towarek",
+          projectId: data.task.projectId,
+          createdAt: data.task.createdAt,
         }])
 
       }
     }
     if (selectedProject) {
-      
+
       console.log(selectedProject)
       if (createNewTask && taskLabel && taskDescription && taskStatus) {
 
@@ -140,7 +153,7 @@ export default function ProjectContent() {
         setCreateNewTask(false);
       }
     }
-  }, [selectedProject, createNewTask, taskLabel, taskDescription, taskStatus, tasks, fetchTasks]);
+  }, [selectedProject, createNewTask, taskLabel, taskDescription, taskStatus, tasks]);
 
 
   async function deleteTaskFromTasks(id: string) {
@@ -188,7 +201,6 @@ export default function ProjectContent() {
         //miejsce na request do dodawania nowego projektu 
         // @Sebastian-Golatowski
       }]);
-      setSelectedProject(projectName);
       setNameOccupied(false);
     }
   }
@@ -253,18 +265,18 @@ export default function ProjectContent() {
   //             name: projectName
   //           })
   //         });
-  
+
   //         if (res.status !== 200) {
   //           console.log("error updating project name");
   //         }
-  
+
   //         return { ...project, name: projectName };
   //       }
-  
+
   //       return project;
   //     })
   //   );
-  
+
   //   setProjects(updatedProjects);
   // }
 
@@ -305,11 +317,10 @@ export default function ProjectContent() {
         <ul className={styles.projectList}>
           {projects.map((project: Project) => (
             <li key={project.id}
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 setSelectedProject(project.id);
-                fetchTasks();
-                count++;
+                console.log(project.id)
+                setCounter(counter + 1);
                 // sessionStorage.setItem('selectedProject', project.name);
               }}>
               {project.name}
@@ -367,32 +378,38 @@ export default function ProjectContent() {
                         </button>
                       </div>
                       <ul>
-                        {tasks.filter((task: Task) =>
-                          task.project_id === selectedProject &&
-                          task.status === label.toLowerCase())
-                          .map((task: Task, index: number) => (
-                            <div key={index} className={styles.taskSingleRow}>
-                              <p>
-                                {task.label}
-                              </p>
-                              <div className={styles.taskNav}>
-                                <button onClick={() => {
-                                  setChangeState(!changeState);
-                                  setSelectedTaskId(task.id);
-                                  setTaskDescription(task.description);
-                                  setTaskLabel(task.label);
-                                }}>
-                                  <DescriptionIcon />
-                                </button>
-
-                                <button onClick={() => {
-                                  deleteTaskFromTasks(task.id);
-                                }}>
-                                  <CloseIcon />
-                                </button>
-                              </div>
+                        <script>
+                          console.log(selectedProject, 123);
+                        </script>
+                        {tasks.filter((task: Task) => task.label.toLowerCase() === label.toLowerCase() && task.projectId.toString() === selectedProject.toString())
+                          .map((task: Task, index: number) => {
+                            console.log(selectedProject, "----", task.projectId);
+                            return <div key={index} className={styles.taskSingleRow}>
+                              {task.label}
                             </div>
-                          ))}
+                          }
+                            // <div key={index} className={styles.taskSingleRow}>
+                            //   <p>
+                            //     {task.label}
+                            //   </p>
+                            //   <div className={styles.taskNav}>
+                            //     <button onClick={() => {
+                            //       setChangeState(!changeState);
+                            //       setSelectedTaskId(task.id);
+                            //       setTaskDescription(task.descryption);
+                            //       setTaskLabel(task.label);
+                            //     }}>
+                            //       <DescriptionIcon />
+                            //     </button>
+
+                            //     <button onClick={() => {
+                            //       deleteTaskFromTasks(task.id);
+                            //     }}>
+                            //       <CloseIcon />
+                            //     </button>
+                            //   </div>
+                            // </div>
+                          )}
                       </ul>
                     </div>
                   })
