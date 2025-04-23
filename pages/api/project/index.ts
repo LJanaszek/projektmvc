@@ -10,24 +10,20 @@ export default async function handler(
 ){
     if (!['POST', 'GET'].includes(req.method)) return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
 
-    const reqUser = authenticateUser(req, res);
+    const reqUser = await authenticateUser(req, res);
     if (!reqUser) return;
     
     if(req.method=="GET"){
-        const projects = await prisma.assignedUsers.findMany({
-            where:{
-                userId:reqUser.id
-            },
-            include:{
-                project:true
-            }
-        })
+        const records = await prisma.assignedUsers.findMany({
+            where:  { userId: reqUser.id },
+            select: { project: true }
+          });
 
-        const userProjects = projects.map(p => p.project);
+          const userProjects = records.map(r => r.project);
         return res.status(200).json(userProjects);     
     }
     if(req.method=="POST"){
-        const { descryption, name } = req.body;
+        const { name } = req.body;
         if(!name) return res.status(400).json({
             message:"No name given"
         });

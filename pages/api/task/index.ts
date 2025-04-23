@@ -12,7 +12,7 @@ export default async function handler(
 ){
     if(req.method!="POST") return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
 
-    const reqUser = authenticateUser(req, res);
+    const reqUser = await authenticateUser(req, res);
     if (!reqUser) return;
 
     const { label, projectId, status, descryption } = req.body

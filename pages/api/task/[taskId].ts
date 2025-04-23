@@ -11,7 +11,7 @@ export default async function handler(
 ){
     if (!['DELETE', 'PATCH', 'GET'].includes(req.method)) return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     
-    const reqUser = authenticateUser(req, res);
+    const reqUser = await authenticateUser(req, res);
     if (!reqUser) return;
 
     // const taskId = req.query

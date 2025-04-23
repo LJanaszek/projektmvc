@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import styles from "@/styles/elements.module.scss";
-import data from "@/data/projects.json";
-import { useCallback, useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import DescriptionIcon from '@mui/icons-material/Description';
 import Popup from "../popup";
@@ -10,9 +9,9 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextField } from "@mui/material";
-import { UserData } from "@/data/user";
 import DoneIcon from '@mui/icons-material/Done';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { Delete } from "@mui/icons-material";
 
 
 interface Project {
@@ -30,6 +29,14 @@ interface Task {
   label: string;
   descryption: string;
 }
+interface Comment{
+  id: string;
+  body: string;
+  madeBy: string;
+  taskId: string;
+  createdAt: string;
+}
+
 export default function ProjectContent() {
   const [selectedProject, setSelectedProject] = useState('');
   const [changeState, setChangeState] = useState(false);
@@ -47,17 +54,15 @@ export default function ProjectContent() {
   const [addedUsers, setAddedUsers] = useState([]);
   const [nameOccupied, setNameOccupied] = useState(false);
   const [users, setUsers] = useState([]);
-  // const userId = ;
   const [projects, setProjects] = useState([]);
   const [projectName, setProjectName] = useState('');
   const [showMembersList, setShowMembersList] = useState(false);
-  // const [userName, setUserName] = useState(false);
-  // const tasks = useRef(data.tasks);
   const [tasks, setTasks] = useState([]);
   const labels = ['To Do', 'In Progress', 'Done'];
-  // let count = 0
+  const [assignedUser, setAssignedUser] = useState('');
 
-
+  //hooki
+  console.log(tasks)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -104,32 +109,86 @@ export default function ProjectContent() {
 
   }, [selectedProject]);
 
-  const allUsers = async () => {
-    const res = await fetch(`/api/user/`, {
-      method: "GET",
+
+  // Raj którego nocą pragniesz
+  // tak jak ja
+  // to niebo, to raj
+  // dalej dalej proszę leć, proszę gnaj.
+
+  //projekty
+
+  async function addNewProject() {
+    const res = await fetch("/api/project/", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json"
-      }
-    })
-    const users = await res.json();
-    setUsers(users.users);
+      },
+      body: JSON.stringify({
+        name: projectName,
+      })
 
+    })
+    if (res.status === 409) {
+      console.log("name already exists")
+      setNameOccupied(true);
+    }
+    else if (res.status === 201) {
+      const data = await res.json()
+      setProjects([...projects, {
+        id: data.project.id,
+        name: data.project.name,
+        description: "",
+        createdAt: data.project.createdAt //get current date without time
+        //miejsce na request do dodawania nowego projektu 
+        // @Sebastian-Golatowski
+      }]);
+      setNameOccupied(false);
+    }
   }
 
-  const assignedUsers = async () => {
-    // @Sebastian-Golatowski - zrobienie requesta do wyciągania userów przypisanych do projektu
-    //setAddedUsers(users.users);
+  async function renameProject() {
+    const updatedProjects = await Promise.all(
+      projects.map(async (project: Project) => {
+        if (project.id === selectedProject) {
+          const res = await fetch(`/api/project/${project.id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              name: projectName
+            })
+          });
 
-    const res = await fetch(`/api/user/${selectedProject}`, {
-      method: "GET",
+          if (res.status !== 200) {
+            console.log("error updating project name");
+          }
+
+          return { ...project, name: projectName };
+        }
+
+        return project;
+      })
+    );
+
+    setProjects(updatedProjects);
+  }
+  async function deleteProjectById(id: string) {
+    setProjects(projects.filter((project: Project) => project.id !== id));
+
+    const res = await fetch(`/api/project/${id}`, {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json"
-      }
+      },
     })
-    const users = await res.json();
-    setAddedUsers(users);
+    if (res.status !== 200) {
+      console.log("erro")
+    }
   }
 
+
+  //taski
 
 
   const addTask = async () => {
@@ -167,13 +226,6 @@ export default function ProjectContent() {
       }
     }
   }
-
-
-  // Raj którego nocą pragniesz
-  // tak jak ja
-  // to niebo, to raj
-  // dalej dalej proszę leć, proszę gnaj.
-
   async function deleteTaskFromTasks(id: string) {
     setTasks(tasks.filter((task: Task) => task.id !== id));
     const res = await fetch(`/api/task/${id}`, {
@@ -186,43 +238,6 @@ export default function ProjectContent() {
       console.log("erro")
     }
   }
-
-  function menageUsers(userId: string) {
-
-
-    //miejsce na request do zarządzania userami 
-    // @Sebastian-Golatowski
-  }
-
-  async function addNewProject() {
-    const res = await fetch("/api/project/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: projectName,
-      })
-
-    })
-    if (res.status === 409) {
-      console.log("name already exists")
-      setNameOccupied(true);
-    }
-    else if (res.status === 201) {
-      const data = await res.json()
-      setProjects([...projects, {
-        id: data.project.id,
-        name: data.project.name,
-        description: "",
-        createdAt: data.project.createdAt //get current date without time
-        //miejsce na request do dodawania nowego projektu 
-        // @Sebastian-Golatowski
-      }]);
-      setNameOccupied(false);
-    }
-  }
-
   async function changeTaskStatus(id: string, taskStatus: string) {
     setTasks(tasks.map((task: Task) => {
       if (task.id === id) {
@@ -240,7 +255,6 @@ export default function ProjectContent() {
       })
     })
   }
-
   async function changeTaskLabel(id: string, taskLabel: string, taskDescription: string) {
     setTasks(tasks.map((task: Task) => {
       if (task.id === id) {
@@ -261,46 +275,85 @@ export default function ProjectContent() {
   }
 
 
-  async function renameProject() {
-    const updatedProjects = await Promise.all(
-      projects.map(async (project: Project) => {
-        if (project.id === selectedProject) {
-          const res = await fetch(`/api/project/${project.id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              name: projectName
-            })
-          });
 
-          if (res.status !== 200) {
-            console.log("error updating project name");
-          }
 
-          return { ...project, name: projectName };
-        }
+  const allUsers = async () => {
+    const res = await fetch(`/api/user/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const users = await res.json();
+    setUsers(users.users);
 
-        return project;
-      })
-    );
-
-    setProjects(updatedProjects);
   }
-  console.log(tasks)
-  async function deleteProjectById(id: string) {
-    setProjects(projects.filter((project: Project) => project.id !== id));
 
-    const res = await fetch(`/api/project/${id}`, {
+  const assignedUsers = async () => {
+    // @Sebastian-Golatowski - zrobienie requesta do wyciągania userów przypisanych do projektu
+    //setAddedUsers(users.users);
+
+    const res = await fetch(`/api/user/${selectedProject}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const users = await res.json();
+    setAddedUsers(users);
+  }
+
+  async function assignUser(userId: string) {
+    const res = await fetch(`/api/task/${selectedTaskId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        assignedTo: userId
+      })
+    })
+  }
+
+  async function addUserToProject(userId: string) {
+    // setTasks(tasks.filter((task: Task) => task.id !== id));
+    const res = await fetch(`/api/user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        userId: userId,
+        projectId: selectedProject
+      })
+    })
+    if (res.status !== 201) {
+      console.log("erro")
+    }
+  }
+  async function removeUserFromProject(userId: string) {
+    const res = await fetch(`/api/user`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
       },
+      body: JSON.stringify({
+        userId: userId,
+        projectId: selectedProject
+      })
     })
     if (res.status !== 200) {
       console.log("erro")
     }
+  }
+
+
+  async function addComment() {
+    
+  }
+
+  async function deleteComment() {
+
   }
 
   return (
@@ -310,8 +363,6 @@ export default function ProjectContent() {
           <h2>Projects </h2>
           <button onClick={async () => {
             setAddProject(true)
-            // miejsce na request do usunięcia projektu
-
           }}>
             <AddIcon />
           </button>
@@ -366,6 +417,7 @@ export default function ProjectContent() {
                       <div className={styles.taskHeader}>
                         <h3>{label}</h3>
                         <button onClick={() => {
+                          assignedUsers();
                           setCreateNewTask(!createNewTask);
                           setTaskLabel('');
                           setTaskDescription('');
@@ -384,6 +436,7 @@ export default function ProjectContent() {
                               </p>
                               <div className={styles.taskNav}>
                                 <button onClick={() => {
+                                  assignedUsers();
                                   setChangeState(!changeState);
                                   setSelectedTaskId(task.id);
                                   setTaskDescription(task.descryption);
@@ -446,18 +499,34 @@ export default function ProjectContent() {
                       setTaskDescription(e.currentTarget.value);
                     }}
                   />
+                  <div className={styles.addUser}>
+                    <label htmlFor="addUser">add user</label>
+                    <select
+                      name="addUser"
+                      id=""
+                      onChange={(e) => {
+                        setAssignedUser(e.currentTarget.value);
+                      }}>
+                      <option value="---">---</option>
+                      {addedUsers.map((user) => {
+                        return <option key={user.id} value={user.id}>{user.username}</option>
+                      })}
+                    </select>
+                  </div>
                   <div className={styles.comments}>
 
-                    <label htmlFor="">Comments:</label>
+                    <label htmlFor="">Comments: <button onClick={()=>{addComment()}}><AddIcon /></button></label>
                     <div className={styles.commentsContainer}>
-                      <div className={styles.singleComment}>
-                        <h4>name</h4>
-                        <p>comment </p>
-                      </div>
-                      <div className={styles.singleComment}>
-                        <h4>name</h4>
-                        <p>comment </p>
-                      </div>
+                      {tasks.find((task: Task) => task.id === selectedTaskId)?.comments?.map((comment: Comment) => {
+                        return <div key={comment.id} className={styles.singleComment}>
+                          <h4>{addedUsers.find((user) => user.id === comment.madeBy)?.username}</h4>
+                          <p>{comment.body}</p>
+                          <button onClick={()=>{deleteComment()}}>
+                            <RemoveIcon />
+                          </button>
+
+                        </div>
+                      })}
                     </div>
                   </div>
                 </div>
@@ -466,7 +535,7 @@ export default function ProjectContent() {
                     e.preventDefault();
                     changeTaskLabel(selectedTaskId, taskLabel, taskDescription)
                     setChangeState(!changeState);
-
+                    assignUser(assignedUser);
                   }}>
                   save
                   <SaveOutlinedIcon />
@@ -645,7 +714,7 @@ export default function ProjectContent() {
                               {user.username}
                               <section>
                                 <button onClick={() => {
-                                  menageUsers(user.id);
+                                  removeUserFromProject(user.id);
                                 }}
                                 >
                                   <RemoveIcon className={styles.deleteIcon} />
@@ -661,7 +730,7 @@ export default function ProjectContent() {
                         <h3>Select members to add</h3>
                         <ul>
 
-                          {users.filter((user) => addedUsers.find((addedUser) => addedUser.id !== user.id))
+                          {users.filter((user) => addedUsers.filter((addedUser) => addedUser.id !== user.id))
                             .map((user, index) => {
                               return <li
                                 key={index}
@@ -672,7 +741,7 @@ export default function ProjectContent() {
 
                                   <button onClick={() => {
 
-                                    menageUsers(user.id);
+                                    addUserToProject(user.id);
                                   }}>
                                     <AddIcon className={styles.addIcon} />
                                   </button>
