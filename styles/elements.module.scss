@@ -117,12 +117,16 @@
     }
     ul {
       list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .1em;
+      padding: .2em 0;
     }
     .task {
       width: 75vw;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3em;
+      gap: 2em;
       min-height: 50vh;
       margin: 0 auto;
       margin-top: 2em;
@@ -139,9 +143,20 @@
       justify-content: space-between;
       align-items: center;
       border-radius: 5px;
-      padding: 0.2em 0.6em;
+      padding: 0.4em 0.7em;
       color: var(--color3);
       font-weight: 300;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+      margin: .2em 0.4em;
+      .taskInfo{
+        width: 80%;
+        display: flex;
+        justify-content: space-between;
+        gap: 1em;
+        span{
+          color: rgba($color: #000, $alpha: 0.4);
+        }
+      }
       p {
         font-size: 18px !important;
       }
@@ -165,8 +180,14 @@
 }
 
 .changeTask {
-  width: 90vw;
+  // max-width: 80vw;
+  width:auto;
   padding: 0.2em;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2em;
+  overflow: hidden;
   label {
     font-weight: 700;
     font-size: 18px;
@@ -176,7 +197,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-    margin: 0.6em 0;
   }
 
   .changeState {
@@ -184,6 +204,10 @@
     gap: 1em;
   }
   .changeLabel {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
   }
   .changeDescription {
     textarea {
@@ -192,10 +216,40 @@
       resize: none;
     }
   }
+  .addUser {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    select {
+      max-width: 20vw;
+    }
+  }
   .comments {
     display: flex;
     flex-direction: column;
     gap: 1em;
+    .commentsLabel {
+      display: flex;
+      justify-content: space-between;
+      padding-right: 2em;
+      label {
+        display: flex;
+        align-items: center;
+      }
+      button {
+        display: flex;
+        align-items: center;
+        border: unset;
+        background-color: unset;
+        color: var(--color4);
+        transition: ease-in-out 0.3s;
+        margin-left: 2em;
+        &:hover {
+          color: var(--color9);
+          transition: ease-in-out 0.3s;
+        }
+      }
+    }
     .commentsContainer {
       display: flex;
       flex-direction: column;
@@ -203,19 +257,99 @@
       padding: 1em;
       background-color: var(--color9);
       box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+      margin-bottom: 2em;
       .singleComment {
         background-color: var(--color3);
         border-radius: 10px;
-        padding: 0.5em 1em;
-        h4 {
-          font-weight: 600;
-          font-size: 16px;
+        padding: 1em 1em;
+        position: relative;
+        .commentHeader {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          div {
+            display: flex;
+            gap: 1em;
+            align-items: center;
+            margin-bottom: 1em;
+            h4 {
+              font-weight: 600;
+              font-size: 16px;
+            }
+            span {
+              font-size: 12px;
+              color: rgba($color: #ffffff, $alpha: 0.4);
+            }
+          }
+          .removeComment {
+            border: unset;
+            background-color: unset;
+            color: var(--color4);
+            transition: ease-in-out 0.3s;
+            &:hover {
+              color: var(--color9);
+              transition: ease-in-out 0.3s;
+            }
+          }
         }
+      }
+      .commentBody {
+        display: flex;
+        justify-content: space-between;
         p {
           font-size: 14px !important;
         }
       }
     }
+  }
+  .save{
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    .saveButton {
+      background-color: var(--color9);
+      color: white;
+      padding: 0.3em 0.5em;
+      border: unset;
+      border-radius: 5px;
+      display: flex;
+      width: fit-content;
+      justify-content: flex-end;
+      align-items: center;
+      height: fit-content;
+     
+      
+      transition: ease-in-out 0.3s;
+      &:hover {
+        opacity: 0.7;
+        transition: ease-in-out 0.3s;
+      }
+    }
+  }
+}
+.addComment {
+  .addCommentHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1em;
+    h4 {
+      font-weight: 600;
+      font-size: 20px;
+    }
+  }
+  .addCommentBody {
+    position: relative;
+    textarea{
+      min-height: 10vh;
+      width: 100%;
+      resize: none;
+    }
+  }
+  button {
+    position: absolute;
+    right: 1em;
+    bottom: 1em;
   }
   .saveButton {
     background-color: var(--color9);

@@ -9,9 +9,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextField } from "@mui/material";
-import DoneIcon from '@mui/icons-material/Done';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Delete } from "@mui/icons-material";
 
 
 interface Project {
@@ -60,9 +58,12 @@ export default function ProjectContent() {
   const [tasks, setTasks] = useState([]);
   const labels = ['To Do', 'In Progress', 'Done'];
   const [assignedUser, setAssignedUser] = useState('');
-  let selectedComment= "";
-  //hooki
+  let selectedComment = "";
+  const [createNewComment, setCreateNewComment] = useState(false);
+  const [commentBody, setCommentBody] = useState('');
 
+
+  //hooki
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -105,7 +106,8 @@ export default function ProjectContent() {
 
   useEffect(() => {
 
-    fetchTasks()
+    fetchTasks();
+    allUsers();
 
 
   }, [selectedProject]);
@@ -360,7 +362,7 @@ export default function ProjectContent() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        body: "jakis comment",
+        body: commentBody,
         taskId: selectedTaskId,
         projectId: selectedProject
       })
@@ -452,10 +454,16 @@ export default function ProjectContent() {
                       <ul>
                         {tasks.filter((task: Task) => task.status.toLowerCase() === label.toLowerCase() && task.projectId === selectedProject)
                           .map((task: Task, index: number) => {
+                            console.log(addedUsers);
                             return <div key={index} className={styles.taskSingleRow}>
-                              <p>
-                                {task.label}
-                              </p>
+                              <div className={styles.taskInfo}>
+                                <p>
+                                  {task.label}
+                                </p>
+                                <span>
+                                  {users.find((user) => user.id === task.assignedTo)?.username}
+                                </span>
+                              </div>
                               <div className={styles.taskNav}>
                                 <button onClick={() => {
                                   assignedUsers();
@@ -483,47 +491,78 @@ export default function ProjectContent() {
               </div>
             ))}
           {changeState &&
-            <Popup closeButton={() => setChangeState(!changeState)}>
-              <div className={styles.changeTask}>
+            <Popup closeButton={() =>
+              createNewComment ? setCreateNewComment(false) : setChangeState(!changeState)
+            }>
+              {!createNewComment &&
+                <div className={styles.changeTask}>
 
-                <div className={styles.changeState}>
-                  <label htmlFor="state">change state</label>
-                  <select name="state" id="state" onChange={(e) => {
-                    changeTaskStatus(selectedTaskId, e.currentTarget.value)
-                  }}>
-                    <option value="---">---</option>
-                    {labels.map((label, index) => {
-                      return <option key={index} value={label.toLowerCase()}>{label}</option>
-                    })}
-                  </select>
-                </div>
+                  <div className={styles.changeState}>
+                    <label htmlFor="state">change state</label>
+                    <select name="state" id="state" onChange={(e) => {
+                      changeTaskStatus(selectedTaskId, e.currentTarget.value)
+                    }}>
+                      <option value="---">---</option>
+                      {labels.map((label, index) => {
+                        return <option key={index} value={label.toLowerCase()}>{label}</option>
+                      })}
+                    </select>
+                  </div>
 
-                <div className={styles.changeLabel}>
-                  <label htmlFor="taskLabel">change task label</label>
-                  <input
-                    name="taskLabel"
-                    id="taskLabel"
-                    defaultValue={tasks.find((task: Task) => task.id === selectedTaskId)?.label || ''}
-                    onChange={(e) => {
-                      setTaskLabel(e.currentTarget.value);
-                    }}
-                  />
+                  <div className={styles.changeLabel}>
+                    <label htmlFor="taskLabel">change task label</label>
+                    <TextField
+                      sx={{
+                        minHeight: '3em',
+                        '& .MuiOutlinedInput-root': {
+                          '& fieldset': {
+                            borderColor: 'rgba(0, 0, 0, 1)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#fff',
+                          }
+                        },
+                        '& .MuiOutlinedInput-input': {
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        },
+                        '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input': {
+                          color: '#fff',
+                        },
+                        '& .MuiInputLabel-root': {
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#fff',
+                        },
+                      }}
+                      label="Task label"
+                      name="taskLabel"
+                      id="taskLabel"
+                      defaultValue={tasks.find((task: Task) => task.id === selectedTaskId)?.label || ''}
+                      onChange={(e) => {
+                        setTaskLabel(e.currentTarget.value);
+                      }}
+                    />
 
 
 
-                </div>
-                <div className={styles.changeDescription}>
-                  <label htmlFor="taskDescription">change task description</label>
-                  <textarea
-                    name="taskDescription"
-                    id="taskDescription"
-                    placeholder={tasks.find((task: Task) => task.id === selectedTaskId).description || ''}
-                    onChange={(e) => {
-                      setTaskDescription(e.currentTarget.value);
-                      console.log(tasks.find((task: Task) => task.id === selectedTaskId).description)
-                      console.log(selectedTaskId)
-                    }}
-                  />
+                  </div>
+                  <div className={styles.changeDescription}>
+                    <label htmlFor="taskDescription">change task description</label>
+                    <textarea
+
+                      name="taskDescription"
+                      id="taskDescription"
+                      placeholder={tasks.find((task: Task) => task.id === selectedTaskId).description || ''}
+                      onChange={(e) => {
+                        setTaskDescription(e.currentTarget.value);
+                        console.log(tasks.find((task: Task) => task.id === selectedTaskId).description)
+                        console.log(selectedTaskId)
+                      }}
+                    />
+
+
+                  </div>
                   <div className={styles.addUser}>
                     <label htmlFor="addUser">add user</label>
                     <select
@@ -539,43 +578,91 @@ export default function ProjectContent() {
                     </select>
                   </div>
                   <div className={styles.comments}>
-
-                    <label htmlFor="">Comments:
+                    <div className={styles.commentsLabel}>
+                      <label>Comments: </label>
                       <button
                         onClick={() => {
-                          addComment()
+                          // addComment()
+                          setCreateNewComment(true);
                         }}>
                         <AddIcon />
                       </button>
-                    </label>
+                    </div>
                     <div className={styles.commentsContainer}>
                       {tasks.find((task: Task) => task.id === selectedTaskId)?.comments?.map((comment: Comment) => {
                         return <div key={comment.id} className={styles.singleComment}>
-                          <h4>{addedUsers.find((user) => user.id === comment.madeBy)?.username}</h4>
-                          <p>{comment.body}</p>
-                          <button onClick={() => {
-                            selectedComment = (comment.id)
-                            deleteComment()
-                          }}>
-                            <RemoveIcon />
-                          </button>
+                          <div className={styles.commentHeader}>
+                            <div>
+                              <h4>{addedUsers.find((user) => user.id === comment.madeBy)?.username}
+                              </h4>
+                              <span>
+                                {comment.createdAt.split('T')[0]} {comment.createdAt.split('T')[1].split('.')[0]}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => {
+                                selectedComment = (comment.id)
+                                deleteComment()
+                              }}
+                              className={styles.removeComment}
+                            >
+                              <RemoveIcon />
+                            </button>
+                          </div>
+                          <div className={styles.commentBody}>
+
+
+                            <p>{comment.body}</p>
+                          </div>
 
                         </div>
                       })}
                     </div>
                   </div>
+                  <div className={styles.save}>
+                    <button className={styles.saveButton}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        changeTaskLabel(selectedTaskId, taskLabel, taskDescription)
+                        setChangeState(!changeState);
+                        if (assignedUser !== '') assignUser(assignedUser);
+                      }}>
+                      save
+                      <SaveOutlinedIcon />
+                    </button>
+                  </div>
+                </div>}
+              {createNewComment &&
+
+                <div className={styles.addComment}>
+                  <div className={styles.addCommentHeader}>
+                    <h4>Add new comment</h4>
+                  </div>
+                  <div className={styles.addCommentBody}>
+                    <textarea
+                      placeholder="Comment body"
+                      name="comment"
+                      id="comment"
+                      onChange={(e) => {
+                        setCommentBody(e.currentTarget.value);
+                      }}
+                    ></textarea>
+                  </div>
+                  <div className={styles.save}>
+                    <button
+                      className={styles.saveButton}
+                      onClick={() => {
+                        addComment();
+                        setCreateNewComment(false)
+                      }}
+                    >
+                      save
+                      <SaveOutlinedIcon />
+                    </button>
+                  </div>
                 </div>
-                <button className={styles.saveButton}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    changeTaskLabel(selectedTaskId, taskLabel, taskDescription)
-                    setChangeState(!changeState);
-                    if (assignedUser !== '') assignUser(assignedUser);
-                  }}>
-                  save
-                  <SaveOutlinedIcon />
-                </button>
-              </div>
+
+              }
             </Popup>
           }
           {createNewTask &&
@@ -596,7 +683,31 @@ export default function ProjectContent() {
 
                 <div className={styles.changeLabel}>
                   <label htmlFor="taskLabel">set task label</label>
-                  <input
+                  <TextField
+                    sx={{
+                      minHeight: '3em',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'rgba(0, 0, 0, 1)',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#fff',
+                        }
+                      },
+                      '& .MuiOutlinedInput-input': {
+                        color: 'rgba(255, 255, 255, 0.5)',
+                      },
+                      '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input': {
+                        color: '#fff',
+                      },
+                      '& .MuiInputLabel-root': {
+                        color: 'rgba(255, 255, 255, 0.5)',
+                      },
+                      '& .MuiInputLabel-root.Mui-focused': {
+                        color: '#fff',
+                      },
+                    }}
+
                     name="taskLabel"
                     id="taskLabel"
                     defaultValue={tasks.find((task: Task) => task.id === selectedTaskId)?.label || ''}
@@ -617,17 +728,24 @@ export default function ProjectContent() {
                       }}
                     />
                   </div>
-
-                  <button
-                    type="button"
-                    className={styles.saveButton}
-                    onClick={() => {
-                      setCreateNewTask(!createNewTask);
-                      addTask();
-                    }}>
-                    save
-                    <SaveOutlinedIcon />
-                  </button>
+                  <div className={styles.save}
+                    style={{
+                      position: 'absolute',
+                      bottom: '1em',
+                      right: '1em'
+                    }}
+                  >
+                    <button
+                      type="button"
+                      className={styles.saveButton}
+                      onClick={() => {
+                        setCreateNewTask(!createNewTask);
+                        addTask();
+                      }}>
+                      save
+                      <SaveOutlinedIcon />
+                    </button>
+                  </div>
                 </div>
               </div>
             </Popup>
@@ -687,6 +805,7 @@ export default function ProjectContent() {
                       type="text"
                       label="Project Name"
                       sx={{
+                        minHeight: '3em',
                         '& .MuiOutlinedInput-root': {
                           '& fieldset': {
                             borderColor: 'rgba(0, 0, 0, 1)',
@@ -829,19 +948,21 @@ export default function ProjectContent() {
 
                 }
                 {!deleteProject &&
-                  <button className={styles.saveButton}
-                    onClick={() => {
-                      renameProject();
-                      setProjectSettings(!projectSettings);
-                      setOpenSettings(!openSettings);
-                      setRename(false);
-                      setMenageMembers(false);
-                      setDeleteProject(false);
-                      location.reload();
-                    }}
-                  >
-                    save <SaveOutlinedIcon />
-                  </button>
+                  <div className={styles.save}>
+                    <button className={styles.saveButton}
+                      onClick={() => {
+                        renameProject();
+                        setProjectSettings(!projectSettings);
+                        setOpenSettings(!openSettings);
+                        setRename(false);
+                        setMenageMembers(false);
+                        setDeleteProject(false);
+                        location.reload();
+                      }}
+                    >
+                      save <SaveOutlinedIcon />
+                    </button>
+                  </div>
                 }
               </div>
             </Popup>
@@ -862,6 +983,7 @@ export default function ProjectContent() {
                     }}
                     variant="outlined"
                     sx={{
+                      minHeight: '3em',
                       '& .MuiOutlinedInput-root': {
                         '& fieldset': {
                           borderColor: 'rgba(0, 0, 0, 1)',
@@ -885,21 +1007,34 @@ export default function ProjectContent() {
                     }}
                   />
                 </div>
-                <button className={styles.saveButton}
-                  onClick={() => {
-                    if (projectName) {
-                      addNewProject();
-                    }
-                    setAddProject(!addProject);
-                  }}>
-                  save
-                  <SaveOutlinedIcon />
-                </button>
+                <div className={styles.save}>
+                  <button className={styles.saveButton}
+                    onClick={() => {
+                      if (projectName) {
+                        addNewProject();
+                      }
+                      setAddProject(!addProject);
+                    }}>
+                    save
+                    <SaveOutlinedIcon />
+                  </button>
+                </div>
               </div>
             </Popup>
           }
         </div>
       </div>
+      {
+        nameOccupied &&
+        <Popup closeButton={() => setNameOccupied(false)}>
+          <div className={styles.addProject}>
+            <h2 >Project name already exists</h2>
+            <p>
+              please choose another name
+            </p>
+          </div>
+        </Popup>
+      }
     </div>
   );
 }

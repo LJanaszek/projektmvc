@@ -1,10 +1,11 @@
 import styles from "@/styles/popup.module.scss"
 import CloseIcon from '@mui/icons-material/Close';
-interface PopupProps { 
+interface PopupProps {
     children: React.ReactNode,
-    closeButton(): void 
+    closeButton(): void,
+   
 }
-export default function Popup({children, closeButton}: PopupProps) {
+export default function Popup({ children, closeButton }: PopupProps) {
     return (
         <div className={styles.popup}>
             <div className={styles.content}>
@@ -13,7 +14,7 @@ export default function Popup({children, closeButton}: PopupProps) {
                 </button>
                 {children}
             </div>
-            
+
         </div>
     );
 }
