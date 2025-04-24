@@ -27,9 +27,9 @@ interface Task {
   projectId: string;
   createdAt: string;
   label: string;
-  descryption: string;
+  description: string;
 }
-interface Comment{
+interface Comment {
   id: string;
   body: string;
   madeBy: string;
@@ -60,9 +60,9 @@ export default function ProjectContent() {
   const [tasks, setTasks] = useState([]);
   const labels = ['To Do', 'In Progress', 'Done'];
   const [assignedUser, setAssignedUser] = useState('');
-
+  let selectedComment= "";
   //hooki
-  console.log(tasks)
+
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -83,27 +83,28 @@ export default function ProjectContent() {
 
     }
     fetchProjects()
-  }, []);
+  }, [addedUsers]);
+  const fetchTasks = async () => {
+    if (!selectedProject) {
+      return
+    }
+    const res = await fetch(`/api/project/${selectedProject}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const data = await res.json()
+    if (res.status == 200) {
+      setTasks(data.tasks);
+    }
+    else {
+      console.log("no i chuj, no i cześć") // ~Hubert Getter~
+    }
+  }
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      if (!selectedProject) {
-        return
-      }
-      const res = await fetch(`/api/project/${selectedProject}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      const data = await res.json()
-      if (res.status == 200) {
-        setTasks(data.tasks);
-      }
-      else {
-        console.log("no i chuj, no i cześć") // ~Hubert Getter~
-      }
-    }
+
     fetchTasks()
 
 
@@ -211,7 +212,7 @@ export default function ProjectContent() {
       setTasks([...tasks, {
         id: data.task.id,
         label: data.task.label,
-        descryption: data.task.description,
+        description: data.task.description,
         status: data.task.status,
         assignedTo: "",
         projectId: data.task.projectId,
@@ -251,7 +252,8 @@ export default function ProjectContent() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        status: taskStatus
+        status: taskStatus,
+        assgnedTo: " "
       })
     })
   }
@@ -269,7 +271,8 @@ export default function ProjectContent() {
       },
       body: JSON.stringify({
         label: taskLabel,
-        descryption: taskDescription
+        description: taskDescription,
+        assgnedTo: " "
       })
     })
   }
@@ -330,6 +333,7 @@ export default function ProjectContent() {
     if (res.status !== 201) {
       console.log("erro")
     }
+    assignedUsers()
   }
   async function removeUserFromProject(userId: string) {
     const res = await fetch(`/api/user`, {
@@ -345,15 +349,33 @@ export default function ProjectContent() {
     if (res.status !== 200) {
       console.log("erro")
     }
+    assignedUsers()
   }
 
 
   async function addComment() {
-    
+    await fetch(`/api/coment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        body: "jakis comment",
+        taskId: selectedTaskId,
+        projectId: selectedProject
+      })
+    })
+    fetchTasks()
   }
 
   async function deleteComment() {
-
+    await fetch(`/api/coment/${selectedComment}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    fetchTasks()
   }
 
   return (
@@ -439,7 +461,7 @@ export default function ProjectContent() {
                                   assignedUsers();
                                   setChangeState(!changeState);
                                   setSelectedTaskId(task.id);
-                                  setTaskDescription(task.descryption);
+                                  setTaskDescription(task.description);
                                   setTaskLabel(task.label);
                                 }}>
                                   <DescriptionIcon />
@@ -469,6 +491,7 @@ export default function ProjectContent() {
                   <select name="state" id="state" onChange={(e) => {
                     changeTaskStatus(selectedTaskId, e.currentTarget.value)
                   }}>
+                    <option value="---">---</option>
                     {labels.map((label, index) => {
                       return <option key={index} value={label.toLowerCase()}>{label}</option>
                     })}
@@ -494,9 +517,11 @@ export default function ProjectContent() {
                   <textarea
                     name="taskDescription"
                     id="taskDescription"
-                    defaultValue={tasks.find((task: Task) => task.id === selectedTaskId)?.description || ''}
+                    placeholder={tasks.find((task: Task) => task.id === selectedTaskId).description || ''}
                     onChange={(e) => {
                       setTaskDescription(e.currentTarget.value);
+                      console.log(tasks.find((task: Task) => task.id === selectedTaskId).description)
+                      console.log(selectedTaskId)
                     }}
                   />
                   <div className={styles.addUser}>
@@ -515,13 +540,23 @@ export default function ProjectContent() {
                   </div>
                   <div className={styles.comments}>
 
-                    <label htmlFor="">Comments: <button onClick={()=>{addComment()}}><AddIcon /></button></label>
+                    <label htmlFor="">Comments:
+                      <button
+                        onClick={() => {
+                          addComment()
+                        }}>
+                        <AddIcon />
+                      </button>
+                    </label>
                     <div className={styles.commentsContainer}>
                       {tasks.find((task: Task) => task.id === selectedTaskId)?.comments?.map((comment: Comment) => {
                         return <div key={comment.id} className={styles.singleComment}>
                           <h4>{addedUsers.find((user) => user.id === comment.madeBy)?.username}</h4>
                           <p>{comment.body}</p>
-                          <button onClick={()=>{deleteComment()}}>
+                          <button onClick={() => {
+                            selectedComment = (comment.id)
+                            deleteComment()
+                          }}>
                             <RemoveIcon />
                           </button>
 
@@ -535,7 +570,7 @@ export default function ProjectContent() {
                     e.preventDefault();
                     changeTaskLabel(selectedTaskId, taskLabel, taskDescription)
                     setChangeState(!changeState);
-                    assignUser(assignedUser);
+                    if (assignedUser !== '') assignUser(assignedUser);
                   }}>
                   save
                   <SaveOutlinedIcon />
@@ -574,14 +609,14 @@ export default function ProjectContent() {
                     <textarea
                       name="taskDescription"
                       id="taskDescription"
-                      defaultValue={tasks.find((task: Task) => task.id === selectedTaskId)?.description || ''}
+                      placeholder={tasks.find((task: Task) => task.id === selectedTaskId)?.description}
                       onChange={(e) => {
                         setTaskDescription(e.currentTarget.value);
+                        console.log(taskDescription)
+                        console.log(tasks)
                       }}
                     />
                   </div>
-
-
 
                   <button
                     type="button"
@@ -604,6 +639,7 @@ export default function ProjectContent() {
               setDeleteProject(false);
               setRename(false);
               setMenageMembers(false);
+              setShowMembersList(false);
             }}>
               <div className={styles.projectSettingsPopup}>
                 <nav>
@@ -707,21 +743,22 @@ export default function ProjectContent() {
                         <h3>Assigned users</h3>
                         <ul>
 
-                          {addedUsers.map((user, index) => {
-                            return <li
-                              key={index}
-                              className={styles.member}>
-                              {user.username}
-                              <section>
-                                <button onClick={() => {
-                                  removeUserFromProject(user.id);
-                                }}
-                                >
-                                  <RemoveIcon className={styles.deleteIcon} />
-                                </button>
-                              </section>
-                            </li>
-                          })}
+                          {addedUsers.length > 0 &&
+                            addedUsers.map((user, index) => {
+                              return <li
+                                key={index}
+                                className={styles.member}>
+                                {user.username}
+                                <section>
+                                  <button onClick={() => {
+                                    removeUserFromProject(user.id);
+                                  }}
+                                  >
+                                    <RemoveIcon className={styles.deleteIcon} />
+                                  </button>
+                                </section>
+                              </li>
+                            })}
                         </ul>
                       </div>
                     }
@@ -730,8 +767,10 @@ export default function ProjectContent() {
                         <h3>Select members to add</h3>
                         <ul>
 
-                          {users.filter((user) => addedUsers.filter((addedUser) => addedUser.id !== user.id))
-                            .map((user, index) => {
+                          {addedUsers.length > 0 &&
+                            users.filter((user) => !addedUsers.map((addedUser) => addedUser.id).includes(user.id)).length > 0 &&
+                            users.filter((user) => !addedUsers.map((addedUser) => addedUser.id).includes(user.id)).map((user, index) => {
+
                               return <li
                                 key={index}
                                 className={styles.member}>
@@ -748,7 +787,17 @@ export default function ProjectContent() {
                                 </section>
                               </li>
                             })}
-
+                          {
+                            addedUsers.length > 0 &&
+                            users.filter((user) => !addedUsers.map((addedUser) => addedUser.id).includes(user.id)).length === 0 &&
+                            <p
+                              style={{
+                                textAlign: 'center'
+                              }}
+                            >
+                              no more users to add
+                            </p>
+                          }
                         </ul>
                       </div>
                     }
@@ -788,6 +837,7 @@ export default function ProjectContent() {
                       setRename(false);
                       setMenageMembers(false);
                       setDeleteProject(false);
+                      location.reload();
                     }}
                   >
                     save <SaveOutlinedIcon />

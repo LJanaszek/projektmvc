@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
-){
+) {
     if (!['DELETE', 'PATCH', 'GET'].includes(req.method)) return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
-    
+
     const reqUser = await authenticateUser(req, res);
     if (!reqUser) return;
 
@@ -22,43 +22,51 @@ export default async function handler(
     }
 
     const task = await prisma.task.findFirst({
-        where:{
-            id:taskId
+        where: {
+            id: taskId
         },
-        include:{
-            comments:true
+        include: {
+            comments: true
         }
     })
 
     const is = await isAssigned(req, res, reqUser, task.projectId, "User not authorized to do that")
-    if(!is) return
+    if (!is) return
 
-    if(req.method=="GET"){ // get comms
+    if (req.method == "GET") { // get comms
         return res.status(200).json(task)
     }
-    else if(req.method=="DELETE"){
+    else if (req.method == "DELETE") {
         await prisma.task.delete({
-            where:{
-                id:String(taskId)
+            where: {
+                id: String(taskId)
             }
         })
-        return res.status(200).json({message: "OK"})
+        return res.status(200).json({ message: "OK" })
     }
-    else if(req.method=="PATCH"){
-        const { label, status, assignedTo, descryption } = req.body;
+    else if (req.method == "PATCH") {
+        const { label, status, assignedTo, description } = req.body;
 
         const updateData: any = {};
 
         if (typeof label === "string") updateData.label = label;
         if (typeof status === "string") updateData.status = status;
-        if (typeof assignedTo === "string") updateData.assignedTo = assignedTo;
-        if (typeof descryption === "string") updateData.descryption = descryption
+        if (typeof description === "string") updateData.description = description
 
-        const updatedTask = await prisma.task.update({
+        const updatedTask1 = await prisma.task.update({
             where: { id: taskId },
             data: updateData,
         });
 
-        return res.status(200).json({ message: "Task updated", task: updatedTask });
+        if(assignedTo !== " "){
+            await prisma.task.update({
+                where: { id: taskId },
+                data:{
+                    assignedTo:assignedTo
+                }
+            });
+        }
+
+        return res.status(200).json({ message: "Task updated", task: updatedTask1 });
     }
 }

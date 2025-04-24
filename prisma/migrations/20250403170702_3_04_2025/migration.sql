@@ -4,7 +4,7 @@
   - You are about to drop the column `toComent` on the `comment` table. All the data in the column will be lost.
   - You are about to drop the column `description` on the `project` table. All the data in the column will be lost.
   - You are about to drop the `status` table. If the table is not empty, all the data it contains will be lost.
-  - Added the required column `descryption` to the `Project` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `description` to the `Project` table without a default value. This is not possible if the table is not empty.
   - Added the required column `label` to the `Task` table without a default value. This is not possible if the table is not empty.
 
 */
@@ -31,7 +31,7 @@ ALTER TABLE `comment` DROP COLUMN `toComent`;
 
 -- AlterTable
 ALTER TABLE `project` DROP COLUMN `description`,
-    ADD COLUMN `descryption` VARCHAR(191) NOT NULL;
+    ADD COLUMN `description` VARCHAR(191) NOT NULL;
 
 -- AlterTable
 ALTER TABLE `task` ADD COLUMN `label` VARCHAR(191) NOT NULL,

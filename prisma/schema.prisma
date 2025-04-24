@@ -47,7 +47,7 @@ model AssignedUsers {
 model Task {
   id         String   @id @default(uuid())
   label      String
-  descryption String
+  description String
   status     String
   assignedTo String?
   projectId  String

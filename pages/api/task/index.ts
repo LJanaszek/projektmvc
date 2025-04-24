@@ -15,7 +15,7 @@ export default async function handler(
     const reqUser = await authenticateUser(req, res);
     if (!reqUser) return;
 
-    const { label, projectId, status, descryption } = req.body
+    const { label, projectId, status, description } = req.body
 
     if( typeof projectId!=="string" || typeof label!== "string" || typeof status!=="string"){
         return res.status(400).json({ 
@@ -32,7 +32,7 @@ export default async function handler(
             label:label,
             status:status,
             projectId:projectId,
-            descryption:descryption || " "
+            description:description 
         }
     })
 

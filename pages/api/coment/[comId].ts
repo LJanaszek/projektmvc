@@ -14,7 +14,7 @@ export default async function handler(
     const reqUser = await authenticateUser(req, res);
     if (!reqUser) return;
 
-    let { comId } = req.query;
+    const { comId } = req.query;
     if (typeof comId !== "string") {
         return res.status(400).json({ message: "Invalid com ID" });
     }
@@ -42,7 +42,7 @@ export default async function handler(
             }
         })
     }catch(e){
-        return res.status(500).json("Internal Server Error")
+        return res.status(500).json(`Internal Server Error, ${e}`)
     }
 
     return res.status(200).json({
