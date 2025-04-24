@@ -14,7 +14,7 @@ export default function Footer() {
                         </ul>
                     </div>
                     <div className={styles.team}>
-                        <h4>Jakiś parobas (xD):</h4>
+                        <h4>Jakiś parobas (xD, tylko na inżynierię oprogramowania ez):</h4>
                         <ul>
                             <li>Hubert Getter</li>
                         </ul>
