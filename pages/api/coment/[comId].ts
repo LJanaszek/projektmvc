@@ -25,7 +25,7 @@ export default async function handler(
         }
     })
 
-    if(!comment) return res.status(400).json({
+    if(!comment) return res.status(404).json({
         message:"Comment does not exists"
     })
 

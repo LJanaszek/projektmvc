@@ -19,8 +19,7 @@ export default async function handler(
 
     if( typeof projectId!=="string" || typeof label!== "string" || typeof status!=="string"){
         return res.status(400).json({ 
-            message:"Missing/Invalid argument/s in request",
-            projectId, label, status
+            message:"Missing/Invalid argument/s in request"
         })
     }
 

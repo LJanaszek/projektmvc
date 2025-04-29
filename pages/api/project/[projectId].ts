@@ -25,7 +25,7 @@ export default async function handler(
         }
     })
 
-    if (!project) return res.status(400).json({
+    if (!project) return res.status(404).json({
         message: "Project does not exists"
     })
 
@@ -44,8 +44,6 @@ export default async function handler(
                     }
                 }
             },
-
-
         })
 
         return res.status(200).json({ tasks: tasks })
@@ -67,7 +65,15 @@ export default async function handler(
     else if (req.method == "PATCH") {
         const { name } = req.body;
 
-        if (!name) return res.status(400)
+        if (!name) return res.status(400).json({ message: 'No name given'});
+
+        const project = await prisma.project.findFirst({
+            where:{
+                name:name
+            }
+        })
+
+        if(project) res.status(400).json({ message: 'Project name already in use'});
 
         try {
             await prisma.project.update({
