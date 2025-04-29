@@ -297,7 +297,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 
 ## /api/project/[projectId]
 - **GET**  
-  _Description: Gets all tasks for the project with included comments_
+  _Description: Gets all tasks for the project (project od from Path Parameter) with included comments_
 #### Successful Response:
 ##### **Status Code:** `200`
 ```json
