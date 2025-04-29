@@ -25,7 +25,7 @@ export default async function handler(
         }
     })
 
-    if(!project) return res.status(400).json({
+    if(!project) return res.status(404).json({
         message:"Project does not exists"
     })
 

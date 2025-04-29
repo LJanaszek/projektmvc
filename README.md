@@ -248,7 +248,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 }
 ```
 
-### /api/project/index
+## /api/project/index
 - **GET**  
   _Description: Gets all projects that the user is assigned to_
 #### Successful Response:
@@ -295,7 +295,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 }
 ```
 
-### /api/project/[projectId]
+## /api/project/[projectId]
 - **GET**  
   _Description: Gets all tasks for the project with included comments_
 #### Successful Response:
@@ -394,7 +394,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 }
 ```
 
-### /api/task/index
+## /api/task/index
 - **POST**  
   _Description: Creates Task_
 #### Expected Parameters in Request body:
@@ -430,7 +430,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 }
 ```
 
-### /api/task/[taskId]
+## /api/task/[taskId]
 - **GET**  
   _Description: Gets task info including comments_
 #### Successful Response:
@@ -485,7 +485,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 }
 ```
 
-### /api/user/index
+## /api/user/index
 - **GET**  
   _Description: Get all users_
 #### Successful Response:
@@ -527,7 +527,6 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
    "message": "Missing/Invalid argument/s in request"
 }
 ```
-
 - **DELETE**  
   _Description: Removes user from project_
 #### Expected Parameters in Request body:
@@ -552,7 +551,7 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
 }
 ```
 
-### /api/user/[projectId]
+## /api/user/[projectId]
 - **GET**  
   _Description: Gets all users assigned to the project with the ID from the path parameter_
 #### Successful Response:
@@ -568,5 +567,18 @@ _Explanation: There is a problem with sending/retrieving to/from the DB_
       "createdAt": "<timestamp>"
     }
   ]
+}
+```
+#### Unsuccessful Responses:
+##### **Status Code:** `400`
+```json
+{
+   "message": "Invalid project ID"
+}
+```
+##### **Status Code:** `404`
+```json
+{
+   "message": "Invalid project ID"
 }
 ```
