@@ -15,22 +15,30 @@ export default function SignUp() {
     const [repeatPasswordError, setRepeatPasswordError] = React.useState(false);
     const [repeatPasswordErrorMessage, setRepeatPasswordErrorMessage] = React.useState('');
     const [isValid, setIsValid] = React.useState(false);
+    const [isUsernameTaken, setIsUsernameTaken] = React.useState(false);
     const validateInputs = async () => {
         const password = document.getElementById('password') as HTMLInputElement;
         const name = document.getElementById('name') as HTMLInputElement;
         const repeatPassword = document.getElementById('repeatPassword') as HTMLInputElement;
 
+        
+        
         if (!password.value || password.value.length < 8) {
             // wielka litera
             //znak specjalny 
             //cyfra
             //mała litera
             setPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 6 characters long.');
+            setPasswordErrorMessage('Password must be at least 8 characters long.');
             setIsValid(false);
         } else {
             setPasswordError(false);
             setPasswordErrorMessage('');
+        }
+        if (!password.value || ! /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=~`]).{8,}$/.test(password.value) ) {
+            setPasswordError(true);
+            setPasswordErrorMessage('Password must have at least one uppercase letter, one lowercase letter, one number and one special character.');
+            setIsValid(false);
         }
         if (password.value !== repeatPassword.value) {
             console.log(password.value);
@@ -47,6 +55,11 @@ export default function SignUp() {
         } else {
             setNameError(false);
             setNameErrorMessage('');
+        }
+        if (!name.value || isUsernameTaken) {
+            setNameError(true);
+            setNameErrorMessage('Username is taken.');
+            setIsValid(false);
         }
 
         return isValid;
@@ -79,6 +92,7 @@ export default function SignUp() {
             else if (res.status === 409) {
                 // username TAKEN 
                 console.log("username TAKEN")
+                setIsUsernameTaken(true);
             }
             else {
                 console.log("Bad Request ergo coś jest źle z danymi")

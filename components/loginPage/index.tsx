@@ -7,11 +7,10 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useState } from "react";
-// import { UserData } from "@/data/user";
 
 
 const LoginPage = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const handleSubmit = async (e) => {
@@ -21,7 +20,7 @@ const LoginPage = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                "username": email,
+                "username": username,
                 "password": password
             }),
         });
@@ -51,11 +50,11 @@ const LoginPage = () => {
                         margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
+                        id="username"
+                        label="username"
+                        name="username"
                         autoFocus
-                        value={email}
+                        value={username}
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 '& fieldset': {
@@ -78,7 +77,7 @@ const LoginPage = () => {
                                 color: '#fff',
                             },
                         }}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
 
                     <TextField
@@ -137,7 +136,7 @@ const LoginPage = () => {
                         }}
                         onClick={handleSubmit}
                     >
-                        LoginPage
+                        Login
                     </Button>
                     <Link href="/register"
                         style={{
