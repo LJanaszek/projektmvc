@@ -1,16 +1,16 @@
-## Project created by:
+# Project created by:
 
 - Sebastian Golatowski - Back-end developer
 - Łukasz Janaszek - Front-end developer
 - Hubert Getter - Project Meneger
 
-## General Project Description:
+# General Project Description:
 
 The aim of the project is to create a modern web application that streamlines project management within teams. The system will enable intuitive creation and organization of projects, task assignment, efficient user management, and integration with a secure authentication system.
 
 Our application is designed to increase work efficiency by centralizing all essential information in one place. This will allow team members to continuously add ideas, comment on and edit tasks, and collaborate in real time. A clear interface and modern technological solutions will make project management simpler, more dynamic, and conducive to productivity.
 
-## Used Tools and Technologies:
+# Used Tools and Technologies:
 
 - [Visual Studio Code](https://code.visualstudio.com/)
 - [Next.js](http://nextjs.org)
@@ -24,7 +24,7 @@ Our application is designed to increase work efficiency by centralizing all esse
 - [Material MUI Icons](https://mui.com/material-ui/material-icons/)
 - [Material UI](https://mui.com/material-ui/)
 
-## Getting Started
+# Getting Started
 
 ### Requirements for developer mode:
 
@@ -38,10 +38,12 @@ create .env.local file with JWT_SECRET="your secret key" variable
 ```
 
 ### Running development server:
+_Turn on apache and mysql on XAMPP_
 
 ```bash
 node -v #check current Node.js version
 yarn #installing dependecies from package.json
+npx prisma migrate dev #creating db and all tables
 yarn dev #running developer server
 
 ```
@@ -55,7 +57,7 @@ Default developer server starts on [http://localhost:3000](http://localhost:3000
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy:
+# Deploy:
 
 ### Vercel
 
@@ -69,7 +71,11 @@ You can add [Docker](https://docker.com) files to this project, creating more ef
 
 Check out [Docker deploy documentation](https://docs.docker.com/reference/compose-file/deploy/) to see how to prepare files and your server to deployment
 
-# API PART
+# DB schema
+![UML DB](https://i.imgur.com/0vwFv6z.png)
+
+
+# Endpoints documentation
 ## Additional errors (they can show in any request you make):
 ##### **Status Code:** `401`
 _Explanation: This error message may be caused if there is no Cookie, there is no token in the cookie, or the token is invalid_

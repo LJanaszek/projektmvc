@@ -49,19 +49,19 @@ export default async function handler(
             }
         })
 
-        // const isSomeone = await prisma.assignedUsers.findFirst({
-        //     where:{
-        //         projectId:projectId
-        //     }
-        // })
+        const isSomeone = await prisma.assignedUsers.findFirst({
+            where:{
+                projectId:projectId
+            }
+        })
 
-        // if(!isSomeone){
-        //     await prisma.project.deleteMany({
-        //         where:{
-        //             id:projectId
-        //         }
-        //     })
-        // }
+        if(!isSomeone){
+            await prisma.project.deleteMany({
+                where:{
+                    id:projectId
+                }
+            })
+        }
 
         return res.status(200).json({message:"User deleted form project"})
     }    

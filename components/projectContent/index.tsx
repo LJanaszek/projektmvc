@@ -102,6 +102,7 @@ export default function ProjectContent() {
     else {
       console.log("no i chuj, no i cześć") // ~Hubert Getter~
     }
+    console.log(data.tasks);
   }
 
   useEffect(() => {
@@ -165,6 +166,9 @@ export default function ProjectContent() {
 
           if (res.status !== 200) {
             console.log("error updating project name");
+          }
+          if (res.status === 400) {
+            alert("project name already used");
           }
 
           return { ...project, name: projectName };
@@ -240,6 +244,7 @@ export default function ProjectContent() {
     if (res.status !== 200) {
       console.log("erro")
     }
+    fetchTasks();
   }
   async function changeTaskStatus(id: string, taskStatus: string) {
     setTasks(tasks.map((task: Task) => {
@@ -258,6 +263,7 @@ export default function ProjectContent() {
         assgnedTo: " "
       })
     })
+    fetchTasks();
   }
   async function changeTaskLabel(id: string, taskLabel: string, taskDescription: string) {
     setTasks(tasks.map((task: Task) => {
@@ -277,6 +283,7 @@ export default function ProjectContent() {
         assgnedTo: " "
       })
     })
+    fetchTasks();
   }
 
 
@@ -454,7 +461,6 @@ export default function ProjectContent() {
                       <ul>
                         {tasks.filter((task: Task) => task.status.toLowerCase() === label.toLowerCase() && task.projectId === selectedProject)
                           .map((task: Task, index: number) => {
-                            console.log(addedUsers);
                             return <div key={index} className={styles.taskSingleRow}>
                               <div className={styles.taskInfo}>
                                 <p>
@@ -570,6 +576,7 @@ export default function ProjectContent() {
                       id=""
                       onChange={(e) => {
                         setAssignedUser(e.currentTarget.value);
+                   
                       }}>
                       <option value="---">---</option>
                       {addedUsers.map((user) => {
