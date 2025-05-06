@@ -75,7 +75,7 @@ export default function ProjectContent() {
         setProjects(data)
       }
       else {
-        console.log("no i chuj, no i cześć 1") // ~Hubert Getter~
+        console.log("Failed to fetch projects")
       }
 
     }
@@ -95,7 +95,7 @@ export default function ProjectContent() {
       console.log(data)
     }
     else {
-      console.log("no i chuj, no i cześć") // ~Hubert Getter~
+      console.log("Failed to fetch tasks for project") 
     }
 
   }, [count])
@@ -114,6 +114,7 @@ export default function ProjectContent() {
           description: taskDescription,
           status: taskStatus,
           projectId: selectedProject,
+
 
         })
       })

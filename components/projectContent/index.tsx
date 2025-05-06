@@ -79,7 +79,7 @@ export default function ProjectContent() {
         setProjects(data)
       }
       else {
-        console.log("no i chuj, no i cześć 1") // ~Hubert Getter~
+        console.log("Failed to fetch projects")
       }
 
     }
@@ -100,7 +100,7 @@ export default function ProjectContent() {
       setTasks(data.tasks);
     }
     else {
-      console.log("no i chuj, no i cześć") // ~Hubert Getter~
+      console.log("Failed to fetch tasks for project")
     }
     console.log(data.tasks);
   }
@@ -114,10 +114,10 @@ export default function ProjectContent() {
   }, [selectedProject]);
 
 
-  // Raj którego nocą pragniesz
-  // tak jak ja
-  // to niebo, to raj
-  // dalej dalej proszę leć, proszę gnaj.
+  // Raj, którego nocą pragniesz
+  // Tak jak ja
+  // To niebo, to raj
+  // Dalej dalej proszę leć, proszę gnaj
 
   //projekty
 
