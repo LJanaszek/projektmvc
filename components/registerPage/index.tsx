@@ -116,15 +116,6 @@ export default function ProjectContent() {
           projectId: selectedProject,
 
 
-
-          // Moje uda, moja broń
-          // Znów przesuwam po kolanie dłoń
-          // Oczy na mnie, spotlight, kurtyna
-          // Masti czas się dopiero zaczyna
-
-
-
-          
         })
       })
       if (res.status == 201) {
