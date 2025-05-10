@@ -168,7 +168,7 @@ export default function ProjectContent() {
             console.log("error updating project name");
           }
           if (res.status === 400) {
-            alert("project name already used");
+            console.log("project name already used");
           }
 
           return { ...project, name: projectName };
