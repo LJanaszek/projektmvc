@@ -4,6 +4,11 @@ import { authenticateUser } from '../../../backedLogic/authenticateUser';
 import { isAssigned } from '@/backedLogic/isAssigned';
 
 const prisma = new PrismaClient();
+type UpdateData = {
+    label?: string;
+    status?: string;
+    description?: string;
+}
 
 export default async function handler(
     req: NextApiRequest,
@@ -47,7 +52,7 @@ export default async function handler(
     else if (req.method == "PATCH") {
         const { label, status, assignedTo, description } = req.body;
 
-        const updateData: any = {};
+        const updateData: UpdateData = {};
 
         if (typeof label === "string") updateData.label = label;
         if (typeof status === "string") updateData.status = status;
@@ -58,11 +63,11 @@ export default async function handler(
             data: updateData,
         });
 
-        if(assignedTo !== " "){
+        if (assignedTo !== " ") {
             await prisma.task.update({
                 where: { id: taskId },
-                data:{
-                    assignedTo:assignedTo
+                data: {
+                    assignedTo: assignedTo
                 }
             });
         }

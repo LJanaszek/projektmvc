@@ -58,7 +58,7 @@ export default async function handler(
 
             return res.status(200).json({ message: "Project deleted successfully" });
         } catch (e) {
-            return res.status(500).json({ message: "Internal server error" })
+            return res.status(500).json({ message: `Internal server error ${e}` })
         }
 
     }
@@ -87,7 +87,7 @@ export default async function handler(
 
             return res.status(200).json({ message: 'Project updated successfully' });
         } catch (e) {
-            return res.status(500).json({ message: "Internal server error" })
+            return res.status(500).json({ message: `Internal server error ${e}` })
         }
     }
 }

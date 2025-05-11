@@ -24,7 +24,7 @@ export default async function handler(
     if(!is) return
 
     try{
-        let come = await prisma.comment.create({
+        const come = await prisma.comment.create({
             data:{
                 body:body, 
                 madeBy:reqUser.id,
@@ -34,6 +34,6 @@ export default async function handler(
 
         return res.status(201).json({ message:"Comment created successfuly", come })
     }catch(e){
-        return res.status(500).json("Internal Server Error")
+        return res.status(500).json(`Internal Server Error ${e}`)
     }
 }
